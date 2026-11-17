@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f8f1e5"><title>In-store menu | LEB EATS Leicester</title>
+  <link rel="icon" href="../assets/logo.png">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #281c18; background: #f8f1e5; font: 16px/1.45 "Helvetica Neue", Helvetica, Arial, sans-serif; }
+    main { max-width: 720px; margin: auto; padding: 24px clamp(18px, 5vw, 44px) 54px; }
+    header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 2px solid #195936; }
+    a { color: #175532; text-underline-offset: 4px; }
+    header a,nav a { display: inline-flex; align-items: center; min-height: 44px; }
+    h1,h2 { line-height: 1.1; margin: 0; }
+    h1 { color: #61100a; font-size: clamp(36px,7vw,58px); letter-spacing: -.045em; margin-top: 28px; }
+    nav { display:flex; flex-wrap:wrap; gap: 0 18px; padding: 6px 0; }
+    h2 { color: #195936; font-size: 27px; letter-spacing: -.03em; border-bottom: 2px solid #195936; padding-bottom: 8px; }
+    section { margin-top: 30px; scroll-margin-top: 16px; }
+    .intro,.description { color: #544338; }
+    .intro { margin: 10px 0; }
+    dl,dd { margin: 0; }
+    .dish { display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; border-bottom: 1px solid #d1c3ad; padding: 14px 0; }
+    dt,.price { color: #61100a; font-weight: 700; }
+    .price { font-variant-numeric: tabular-nums; }
+    .description { grid-column: 1/-1; }
+    footer { margin-top: 32px; }
+    :focus-visible { outline: 2px solid #175532; outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <header><a href="./">LEB EATS home</a><a href="../assets/leb-eats-printed-menu.jpg">View printed menu</a></header>
+    <h1>In-store menu</h1>
+    <nav aria-label="Menu categories"><a href="#boxes">Boxes</a><a href="#charcoal-grill">Charcoal grill</a><a href="#hot-starters">Hot starters</a><a href="#cold-starters">Cold starters</a><a href="#sides">Sides</a><a href="#drinks-sauces">Drinks &amp; sauces</a></nav>
+    <section id="boxes">
+      <h2>Boxes</h2>
+      <p class="intro">Leb Boxes 1–6 include one to three sauces and a drink.</p>
+      <dl>
+        <div class="dish">
+          <dt>Leb Box 1</dt>
+          <dd class="price">£10.95</dd>
+          <dd class="description">Half a boneless grilled chicken with spicy or Lebanese rice, chips and salad. Extra chicken +£2.99.</dd>
+        </div>
+        <div class="dish">
+          <dt>Leb Box 2</dt>
+          <dd class="price">£10.95</dd>
+          <dd class="description">Mixed shish with spicy or Lebanese rice, chips and salad.</dd>
+        </div>
+        <div class="dish">
+          <dt>Leb Box 3</dt>
+          <dd class="price">£10.95</dd>
+          <dd class="description">Chicken wings with spicy or Lebanese rice, chips and salad.</dd>
+        </div>
+        <div class="dish">
+          <dt>Leb Box 4 · Veg Box</dt>
+          <dd class="price">£10.95</dd>
+          <dd class="description">Hummus, baba ganouj, stuffed vine leaves, falafel and salad.</dd>
+        </div>
+        <div class="dish">
+          <dt>Leb Box 5</dt>
+          <dd class="price">£10.95</dd>
+          <dd class="description">Halloumi, hummus, baba ganouj, chips and salad.</dd>
+        </div>
+        <div class="dish">
+          <dt>Leb Box 6 · Pastry Box</dt>
+          <dd class="price">£10.95</dd>
+          <dd class="description">Kibbeh, cheese boregi, lamb boregi, spinach fatayer and chips.</dd>
+        </div>
+        <div class="dish">
+          <dt>Rice Box</dt>
+          <dd class="price">£5.95</dd>
+          <dd class="description">Spicy or Lebanese rice with chicken.</dd>
+        </div>
+      </dl>
+    </section>
+    <section id="charcoal-grill">
+      <h2>Charcoal grill</h2>
+      <p class="intro">Served with Lebanese rice, spicy rice or chips, and up to three sauces.</p>
+      <dl>
+        <div class="dish">
+          <dt>Kafta Skewers</dt>
+          <dd class="price">£16.95</dd>
+          <dd class="description">Seasoned minced lamb skewers with grilled tomato, onion and pitta.</dd>
+        </div>
+        <div class="dish">
+          <dt>Shish Taouk</dt>
+          <dd class="price">£15.95</dd>
+          <dd class="description">Marinated chicken skewers with grilled tomato and garlic pitta.</dd>
+        </div>
+        <div class="dish">
+          <dt>Lamb Fillet Skewers</dt>
+          <dd class="price">£17.95</dd>
+          <dd class="description">Two marinated lamb fillet skewers with grilled tomato, onion and pitta.</dd>
+        </div>
+        <div class="dish">
+          <dt>Lamb Cutlets</dt>
+          <dd class="price">£18.95</dd>
+          <dd class="description">Four marinated lamb cutlets with grilled tomato, onion and pitta.</dd>
+        </div>
+        <div class="dish">
+          <dt>Mixed Meat Grill</dt>
+          <dd class="price">£19.95</dd>
+          <dd class="description">Kafta, shish taouk and lamb fillet with grilled tomato and onion.</dd>
+        </div>
+      </dl>
+    </section>
+    <section id="hot-starters">
+      <h2>Hot starters</h2>
+      <dl>
+        <div class="dish">
+          <dt>Falafel</dt>
+          <dd class="price">£5.95</dd>
+          <dd class="description">Crispy chickpea and broad bean bites with spices and tahini sauce.</dd>
+        </div>
+        <div class="dish">
+          <dt>Grilled Chicken Wings</dt>
+          <dd class="price">£6.95</dd>
+          <dd class="description">Five wings with a choice of one or two sauces.</dd>
+        </div>
+        <div class="dish">
+          <dt>Kibbeh</dt>
+          <dd class="price">£6.95</dd>
+          <dd class="description">Crispy bulgur wheat shells filled with seasoned minced lamb and onion.</dd>
+        </div>
+        <div class="dish">
+          <dt>Grilled Halloumi</dt>
+          <dd class="price">£6.95</dd>
+          <dd class="description">Served with fresh tomato and cucumber.</dd>
+        </div>
+        <div class="dish">
+          <dt>Cheese Boregi</dt>
+          <dd class="price">£6.45</dd>
+          <dd class="description">Crispy filo parcels filled with mozzarella, halloumi and white cheese.</dd>
+        </div>
+        <div class="dish">
+          <dt>Lamb Boregi</dt>
+          <dd class="price">£6.95</dd>
+          <dd class="description">Crispy filo parcels filled with seasoned minced lamb, onion and parsley.</dd>
+        </div>
+        <div class="dish">
+          <dt>Spinach Fatayer</dt>
+          <dd class="price">£6.45</dd>
+          <dd class="description">Baked Lebanese pastry filled with spinach, onion and sumac.</dd>
+        </div>
+      </dl>
+    </section>
+    <section id="cold-starters">
+      <h2>Cold starters</h2>
+      <dl>
+        <div class="dish">
+          <dt>Hummus</dt>
+          <dd class="price">£5.95</dd>
+          <dd class="description">Chickpeas blended with tahini and lemon.</dd>
+        </div>
+        <div class="dish">
+          <dt>Baba Ganouj</dt>
+          <dd class="price">£6.95</dd>
+          <dd class="description">Smoky aubergine blended with tahini, lemon and garlic, topped with pomegranate seeds.</dd>
+        </div>
+        <div class="dish">
+          <dt>Waraq Anab</dt>
+          <dd class="price">£5.95</dd>
+          <dd class="description">Vine leaves stuffed with rice, parsley, tomato and onion, finished with lemon and olive oil.</dd>
+        </div>
+        <div class="dish">
+          <dt>Turkish Saksuka</dt>
+          <dd class="price">£6.45</dd>
+          <dd class="description">Pan-fried aubergine and chickpeas with garlic in a rich tomato sauce.</dd>
+        </div>
+        <div class="dish">
+          <dt>Fattoush Salad</dt>
+          <dd class="price">£6.45</dd>
+          <dd class="description">Mixed salad with tomato, crispy pitta, sumac, vinegar and olive oil.</dd>
+        </div>
+      </dl>
+    </section>
+    <section id="sides">
+      <h2>Sides</h2>
+      <dl>
+        <div class="dish">
+          <dt>Fries</dt>
+          <dd class="price">£2.45</dd>
+        </div>
+        <div class="dish">
+          <dt>Rice</dt>
+          <dd class="price">£2.45</dd>
+          <dd class="description">Spicy or Lebanese.</dd>
+        </div>
+      </dl>
+    </section>
+    <section id="drinks-sauces">
+      <h2>Drinks &amp; sauces</h2>
+      <dl>
+        <div class="dish">
+          <dt>Cans</dt>
+          <dd class="price">£1.45</dd>
+        </div>
+        <div class="dish">
+          <dt>Water Bottle</dt>
+          <dd class="price">£0.99</dd>
+        </div>
+        <div class="dish">
+          <dt>Sauce Tubs</dt>
+          <dd class="price">£0.50</dd>
+          <dd class="description">Spicy, garlic mayo, mayo, BBQ, ketchup, chilli, lemon &amp; herb or burger sauce.</dd>
+        </div>
+      </dl>
+    </section>
+    <footer><a href="./">Back to LEB EATS</a></footer>
+  </main>
+</body>
+</html>

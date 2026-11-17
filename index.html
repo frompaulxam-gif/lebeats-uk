@@ -34,6 +34,22 @@
     input { width: min(100%, 340px); padding: 10px 16px; border: 1px solid white; color: white; background: transparent; }
     input::placeholder { color: white; opacity: .82; }
     #status { margin: 0; font-size: 15px; }
+    .jump { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 20px; margin: -12px 0 16px; }
+    .jump a, .info a, .linktree { color: inherit; text-underline-offset: 4px; }
+    .jump a, .linktree { display: inline-flex; align-items: center; min-height: 44px; }
+    .info { margin-top: 28px; padding-top: 22px; border-top: 1px solid #ffffff42; text-align: left; scroll-margin-top: 16px; }
+    .info h2 { margin: 0 0 12px; font-size: 24px; }
+    .info p { margin: 8px 0; }
+    .reward { padding: 20px; border-radius: 12px; background: #191716; }
+    .reward small { color: #f0e4c8; }
+    .hours { margin: 12px 0; }
+    .hours div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid #ffffff30; }
+    .hours dd { margin: 0; text-align: right; }
+    .faq details { border-bottom: 1px solid #ffffff38; }
+    .faq summary { min-height: 44px; padding: 12px 0; cursor: pointer; font-weight: 600; }
+    .faq details p { margin: 0 0 14px; }
+    form small { max-width: 340px; }
+    .linktree { margin-top: 14px; }
     @media (max-width: 620px) {
       html { background: #5a0a03; }
       main { padding: 0; }
@@ -55,6 +71,9 @@
         <a href="mailto:lebeatsuk@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.30606 7.28017C4.14002 7.62375 4.06901 7.99473 4.03469 8.4148C3.99999 8.83953 3.99999 9.36401 4 10.0143V13.9857C3.99999 14.6359 3.99999 15.1604 4.03469 15.5852C4.07042 16.0225 4.14591 16.4066 4.32698 16.7619C4.6146 17.3264 5.07354 17.7854 5.63803 18.073C5.9934 18.2541 6.37752 18.3296 6.81483 18.3653C7.23955 18.4 7.76404 18.4 8.4143 18.4H15.5857C16.236 18.4 16.7605 18.4 17.1852 18.3653C17.6225 18.3296 18.0066 18.2541 18.362 18.073C18.9265 17.7854 19.3854 17.3264 19.673 16.7619C19.8541 16.4066 19.9296 16.0225 19.9653 15.5852C20 15.1604 20 14.6359 20 13.9857V10.0143C20 9.36401 20 8.83953 19.9653 8.4148C19.931 7.99473 19.86 7.62375 19.6939 7.28017L13.8997 12.0209C12.7946 12.9251 11.2054 12.9251 10.1003 12.0209L4.30606 7.28017Z"/><path d="M18.9609 6.3295C18.7792 6.17262 18.5783 6.0372 18.362 5.92696C18.0066 5.74588 17.6225 5.6704 17.1852 5.63467C16.7605 5.59997 16.236 5.59997 15.5857 5.59998H8.41432C7.76406 5.59997 7.23955 5.59997 6.81483 5.63467C6.37752 5.6704 5.9934 5.74588 5.63803 5.92696C5.42166 6.0372 5.2208 6.17262 5.03915 6.3295L10.8602 11.0922C11.5232 11.6347 12.4768 11.6347 13.1398 11.0922L18.9609 6.3295Z"/></svg></a>
         <a href="https://www.facebook.com/profile.php?id=61596560216885" aria-label="Facebook" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12C23 5.92487 18.0751 0.999996 12 0.999996C5.92488 0.999996 1 5.92487 1 12C1 17.1588 4.55146 21.4874 9.34266 22.6761V15.3614H7.07438V12H9.34266V10.5516C9.34266 6.80751 11.037 5.07215 14.7128 5.07215C15.4096 5.07215 16.6121 5.20877 17.104 5.34544V8.39261C16.8444 8.36529 16.3935 8.3516 15.8332 8.3516C14.0295 8.3516 13.3326 9.03484 13.3326 10.8112V12H16.9256L16.3084 15.3614H13.3326V22.9194C18.7792 22.2616 23 17.624 23 12Z"/></svg></a>
       </nav>
+      <nav class="jump" aria-label="Restaurant information">
+        <a href="menu.html">Menu</a><a href="#visit">Hours &amp; location</a><a href="#black-card">Black Card</a><a href="#faq">FAQs</a>
+      </nav>
       <nav class="links" aria-label="Orders, social profiles and reviews">
         <a href="https://www.ubereats.com/store/leb-eats/daoqcZHZTGej6fD-toGRIg"><img src="../assets/links-uber-eats.webp" width="48" height="48" alt=""><span>ORDER ON UBER EATS 🚚</span></a>
         <a href="https://deliveroo.co.uk/menu/leicester/evington-valley/leb-eats-197-uppingham-road"><img src="../assets/links-deliveroo.webp" width="48" height="48" alt=""><span>ORDER ON DELIVEROO 🚚</span></a>
@@ -66,11 +85,42 @@
         <h2>Website coming soon</h2>
         <button id="signup" type="button" aria-controls="email-form" aria-expanded="false">Sign up now</button>
         <form id="email-form" hidden>
+          <small>Preview only. Email and SMS subscriptions open soon.</small>
           <input id="email" type="email" aria-label="Email address" placeholder="Email address" autocomplete="email" required>
+          <input type="tel" aria-label="Mobile number for SMS updates (optional)" placeholder="Mobile number for SMS (optional)" autocomplete="tel">
           <button type="submit">Enter your email</button>
         </form>
         <p id="status" role="status"></p>
       </div>
+      <section class="info reward" id="black-card">
+        <small>Coming soon</small>
+        <h2>The Black Card</h2>
+        <p>Earn rewards when you order directly with LEB EATS. After four direct orders, get a <strong>£5 reward</strong>. After eight, choose <strong>a free Leb Box</strong>.</p>
+        <p>Uber Eats and Deliveroo orders do not count towards Black Card rewards.</p>
+      </section>
+      <section class="info" id="visit">
+        <h2>Hours &amp; location</h2>
+        <p>197 Uppingham Road, Leicester, LE5 4BQ.</p>
+        <p><a href="https://www.google.com/maps?cid=11615845116125379080">Get directions</a> · <a href="mailto:lebeatsuk@gmail.com">lebeatsuk@gmail.com</a></p>
+        <dl class="hours" aria-label="Restaurant opening hours">
+          <div><dt>Monday</dt><dd>Closed</dd></div>
+          <div><dt>Tuesday to Thursday</dt><dd>Noon – 10pm</dd></div>
+          <div><dt>Friday and Saturday</dt><dd>Noon – 11pm</dd></div>
+          <div><dt>Sunday</dt><dd>Noon – 10pm</dd></div>
+        </dl>
+      </section>
+      <section class="info faq" id="faq">
+        <h2>FAQs</h2>
+        <details><summary>Where are you located?</summary><p>197 Uppingham Road, Leicester, LE5 4BQ. <a href="#visit">Get directions</a>.</p></details>
+        <details><summary>What are your opening hours?</summary><p>Tuesday to Thursday and Sunday, noon to 10pm. Friday and Saturday, noon to 11pm. We’re closed on Mondays.</p></details>
+        <details><summary>Is your food halal?</summary><p>Yes, all our meat is halal.</p></details>
+        <details><summary>Are you HMC?</summary><p>Yes.</p></details>
+        <details><summary>Do you offer delivery?</summary><p>Yes. Order through <a href="https://www.ubereats.com/store/leb-eats/daoqcZHZTGej6fD-toGRIg">Uber Eats</a> or <a href="https://deliveroo.co.uk/menu/leicester/evington-valley/leb-eats-197-uppingham-road">Deliveroo</a>. Direct ordering on our website is coming soon.</p></details>
+        <details><summary>Can I order for collection?</summary><p>Yes. Walk in or place your collection order by phone.</p></details>
+        <details><summary>Do you have seating?</summary><p>Yes, we have limited indoor seating.</p></details>
+        <details><summary>Do you have vegetarian options?</summary><p>Yes. Try the Veg Box, falafel or hummus. <a href="menu.html">View the menu</a>.</p></details>
+      </section>
+      <a class="linktree" href="https://linktr.ee/lebeatsuk">LEB EATS on Linktree</a>
     </div>
   </main>
   <script>
