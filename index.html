@@ -3,57 +3,68 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#780214">
+  <meta name="theme-color" content="#5a0a03">
   <meta name="description" content="Order from LEB EATS on Uppingham Road in Leicester, follow us on Instagram and TikTok, or get in touch.">
   <title>LEB EATS | Coming soon</title>
   <link rel="icon" href="../assets/logo.png">
   <style>
     * { box-sizing: border-box; }
-    html { background: #780214; color: #fff; }
+    html { background: #581f1a; color: #fff; }
     body { margin: 0; font: 16px/1.45 "Helvetica Neue", Helvetica, Arial, sans-serif; }
-    main { min-height: 100vh; min-height: 100svh; display: grid; place-items: center; padding: 42px 20px; }
-    .brand { width: min(100%, 370px); text-align: center; }
-    .brand > svg { display: block; width: clamp(126px, 32vw, 158px); height: auto; margin: auto; border-radius: 9%; overflow: hidden; }
-    .bio { margin: 16px 0 0; font-size: 18px; font-weight: 700; }
-    address { margin: 2px 0 24px; font-style: normal; font-size: 14px; color: #ffe4e5; }
-    nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
-    nav a, button, input { min-height: 46px; border-radius: 15px; font: inherit; }
-    nav a { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 12px 16px; color: white; font-weight: 650; text-decoration: none; background: #ffffff0d; border: 1px solid #ffffff55; }
-    nav a::after { content: "↗"; font-size: 16px; font-weight: 400; }
-    nav a.order { grid-column: 1 / -1; background: #fff; color: #510615; border-color: #fff; }
-    nav a:hover { background: #ffffff24; } nav a.order:hover, button:hover { background: #ffe5e8; }
-    .details { margin-top: 23px; padding-top: 17px; border-top: 1px solid #ffffff45; }
-    h1 { margin: 0 0 10px; font-size: 20px; line-height: 1.3; }
-    button { padding: 9px 20px; border: 0; border-radius: 24px; background: #fff; color: #780214; font-weight: 700; cursor: pointer; }
-    :is(a, button, input):focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+    main { padding: 40px 20px; }
+    .brand { width: min(100%, 580px); margin: auto; padding: 52px 28px 34px; background: #5a0a03; border-radius: 24px; text-align: center; }
+    .avatar { display: block; width: 96px; height: 96px; margin: auto; border-radius: 50%; }
+    h1 { margin: 14px 0 1px; font-size: 25px; font-weight: 600; letter-spacing: -.025em; }
+    .bio { margin: 0 auto; max-width: 100%; font-weight: 500; line-height: 1.46; }
+    .socials { display: flex; justify-content: center; gap: 4px; margin: 10px auto 28px; }
+    .socials a { width: 44px; height: 44px; display: grid; place-items: center; color: inherit; border-radius: 50%; }
+    .socials a:hover { background: #ffffff1f; }
+    .socials svg { width: 32px; height: 32px; }
+    .links { display: grid; gap: 14px; }
+    .links a { display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; padding: 8px; min-height: 64px; color: #121212; background: white; border-radius: 8px; text-decoration: none; font-size: 15px; line-height: 1.25; font-weight: 500; text-transform: uppercase; }
+    .links img { width: 48px; height: 48px; display: block; border-radius: 4px; }
+    .links a::after { content: "↗"; color: #68615f; font-size: 16px; }
+    .links a:hover, button:hover { background: #fff2ee; }
+    .details { margin-top: 28px; }
+    h2 { margin: 0 0 10px; font-size: 19px; }
+    button, input { min-height: 44px; border-radius: 24px; font: inherit; }
+    button { padding: 9px 20px; border: 0; background: #fff; color: #5a0a03; font-weight: 700; cursor: pointer; }
+    :is(a, button, input):focus-visible { outline: 2px solid white; outline-offset: 3px; }
     form { display: grid; gap: 9px; justify-items: center; }
     [hidden] { display: none; }
-    input { width: 100%; padding: 10px 16px; border: 1px solid #fff; color: #fff; background: transparent; }
-    input::placeholder { color: #fff; opacity: .82; }
+    input { width: min(100%, 340px); padding: 10px 16px; border: 1px solid white; color: white; background: transparent; }
+    input::placeholder { color: white; opacity: .82; }
     #status { margin: 0; font-size: 15px; }
-    @media (max-width: 350px) { nav a { padding-inline: 12px; font-size: 15px; } }
-    @media (max-height: 660px) { main { padding-block: 24px; } }
+    @media (max-width: 620px) {
+      html { background: #5a0a03; }
+      main { padding: 0; }
+      .brand { padding: 36px 14px max(26px, env(safe-area-inset-bottom)); border-radius: 0; }
+      .bio { max-width: 270px; }
+      .links a { font-size: 14px; }
+    }
   </style>
 </head>
 <body>
   <main>
     <div class="brand">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="280 313 532 460" role="img" aria-labelledby="logo-title">
-        <title id="logo-title">LEB EATS</title>
-        <image href="../assets/leb-eats-brand.png" width="1080" height="1080" />
-      </svg>
-      <p class="bio">Leicester Lebanese Grill</p>
-      <address>197 Uppingham Road, Leicester, LE5 4BQ</address>
-      <nav aria-label="Order, follow and contact LEB EATS">
-        <a class="order" href="https://www.ubereats.com/store/leb-eats/daoqcZHZTGej6fD-toGRIg">Order on Uber Eats</a>
-        <a class="order" href="https://deliveroo.co.uk/menu/leicester/evington-valley/leb-eats-197-uppingham-road">Order on Deliveroo</a>
-        <a href="https://www.instagram.com/lebeatsuk">Instagram</a>
-        <a href="https://www.tiktok.com/@lebeatsuk">TikTok</a>
-        <a href="mailto:lebeatsuk@gmail.com">Email us</a>
-        <a href="https://share.google/FJBIpbPd4rjr58xO9">Leave a review</a>
+      <img class="avatar" src="../assets/links-instagram-avatar.webp" alt="LEB EATS logo" width="96" height="96">
+      <h1>Leb Eats 🇱🇧</h1>
+      <p class="bio">Leicester Lebanese Grill 197 Uppingham Road, LE5 4BQ 📍</p>
+      <nav class="socials" aria-label="Follow and contact LEB EATS">
+        <a href="https://www.instagram.com/lebeatsuk" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C9.2912 2 8.94131 2 7.86907 2.05643C7.03985 2.07241 6.21934 2.22888 5.44244 2.51919C4.78781 2.77878 4.23476 3.11738 3.67043 3.68172C3.11738 4.23476 2.76749 4.78781 2.51919 5.45372C2.27088 6.08578 2.10158 6.80813 2.05643 7.88036C2.01129 8.94131 2 9.27991 2 12C2 14.7088 2 15.0474 2.05643 16.1196C2.10158 17.1919 2.28217 17.9255 2.51919 18.5576C2.77878 19.2122 3.11738 19.7652 3.67043 20.3296C4.23476 20.8826 4.78781 21.2325 5.44244 21.4808C6.08578 21.7291 6.80813 21.8984 7.86907 21.9436C8.94131 21.9887 9.27991 22 12 22C14.7088 22 15.0474 22 16.1196 21.9436C17.1806 21.8984 17.9142 21.7178 18.5463 21.4808C19.2137 21.2306 19.8184 20.8377 20.3183 20.3296C20.8826 19.7652 21.2212 19.2009 21.4695 18.5576C21.7178 17.9142 21.8871 17.1919 21.9436 16.1196C21.9887 15.0587 22 14.7201 22 12C22 9.2912 21.9887 8.9526 21.9436 7.88036C21.9225 7.05065 21.7622 6.23037 21.4695 5.45372C21.2189 4.78649 20.8261 4.18182 20.3183 3.68172C19.754 3.11738 19.2122 2.77878 18.5463 2.51919C17.7686 2.23315 16.9482 2.08051 16.1196 2.06772C15.0474 2.01129 14.7088 2 12 2ZM11.0971 3.80587H12C14.6637 3.80587 14.9797 3.80587 16.0406 3.8623C16.6724 3.8686 17.2985 3.98313 17.8916 4.2009C18.3657 4.38149 18.693 4.59594 19.0429 4.94582C19.3928 5.29571 19.6072 5.63431 19.7991 6.09706C19.9345 6.45824 20.0925 6.97743 20.1377 7.95937C20.1828 9.00903 20.1941 9.32506 20.1941 12C20.1941 14.6637 20.1941 14.9797 20.1377 16.0406C20.1314 16.6724 20.0169 17.2985 19.7991 17.8916C19.6185 18.3657 19.3928 18.693 19.0429 19.0429C18.7043 19.3928 18.3657 19.6072 17.8916 19.7878C17.2992 20.0094 16.6731 20.1278 16.0406 20.1377C14.9797 20.1828 14.6637 20.1941 12 20.1941C9.32506 20.1941 9.00903 20.1941 7.95937 20.1377C7.3238 20.1322 6.69388 20.0177 6.09706 19.7991C5.63431 19.6072 5.307 19.3928 4.94582 19.0429C4.60722 18.7043 4.38149 18.3657 4.2009 17.8916C3.98313 17.2985 3.8686 16.6724 3.8623 16.0406C3.80587 14.9797 3.79458 14.6637 3.79458 12C3.79458 9.32506 3.80587 9.00903 3.85102 7.95937C3.85602 7.32375 3.97057 6.69376 4.18962 6.09706C4.38149 5.63431 4.59594 5.307 4.94582 4.94582C5.29571 4.60722 5.62302 4.38149 6.09706 4.2009C6.69376 3.98185 7.32375 3.86731 7.95937 3.8623C8.87359 3.81716 9.23476 3.80587 11.0971 3.79458V3.80587ZM17.3386 5.46501C17.1815 5.46501 17.0259 5.49596 16.8808 5.55608C16.7356 5.6162 16.6037 5.70433 16.4926 5.81542C16.3815 5.92652 16.2934 6.05841 16.2333 6.20356C16.1732 6.34871 16.1422 6.50429 16.1422 6.6614C16.1422 6.81851 16.1732 6.97408 16.2333 7.11924C16.2934 7.26439 16.3815 7.39628 16.4926 7.50737C16.6037 7.61847 16.7356 7.70659 16.8808 7.76672C17.0259 7.82684 17.1815 7.85779 17.3386 7.85779C17.6559 7.85779 17.9602 7.73174 18.1846 7.50737C18.4089 7.28301 18.535 6.9787 18.535 6.6614C18.535 6.3441 18.4089 6.03979 18.1846 5.81542C17.9602 5.59106 17.6559 5.46501 17.3386 5.46501ZM12 6.86456C11.3256 6.86456 10.6578 6.99739 10.0348 7.25547C9.41169 7.51355 8.84556 7.89182 8.36869 8.36869C7.89182 8.84556 7.51355 9.41169 7.25547 10.0348C6.99739 10.6578 6.86456 11.3256 6.86456 12C6.86456 12.6744 6.99739 13.3422 7.25547 13.9652C7.51355 14.5883 7.89182 15.1544 8.36869 15.6313C8.84556 16.1082 9.41169 16.4864 10.0348 16.7445C10.6578 17.0026 11.3256 17.1354 12 17.1354C13.362 17.1354 14.6682 16.5944 15.6313 15.6313C16.5944 14.6682 17.1354 13.362 17.1354 12C17.1354 10.638 16.5944 9.33178 15.6313 8.36869C14.6682 7.40561 13.362 6.86456 12 6.86456ZM12 8.67043C12.4372 8.67043 12.8702 8.75655 13.2742 8.92388C13.6781 9.0912 14.0452 9.33646 14.3544 9.64564C14.6635 9.95482 14.9088 10.3219 15.0761 10.7258C15.2434 11.1298 15.3296 11.5628 15.3296 12C15.3296 12.4372 15.2434 12.8702 15.0761 13.2742C14.9088 13.6781 14.6635 14.0452 14.3544 14.3544C14.0452 14.6635 13.6781 14.9088 13.2742 15.0761C12.8702 15.2434 12.4372 15.3296 12 15.3296C11.1169 15.3296 10.2701 14.9788 9.64564 14.3544C9.02122 13.7299 8.67043 12.8831 8.67043 12C8.67043 11.1169 9.02122 10.2701 9.64564 9.64564C10.2701 9.02122 11.1169 8.67043 12 8.67043Z"/></svg></a>
+        <a href="https://www.tiktok.com/@lebeatsuk" aria-label="TikTok" title="TikTok"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.9453 8.68918V15.6727C15.9453 19.1598 13.1048 22.0004 9.6177 22.0004C8.27369 22.0004 7.01685 21.5717 5.99251 20.8525C4.35796 19.7047 3.29004 17.8085 3.29004 15.6727C3.29004 12.1783 6.12333 9.34505 9.6104 9.34505C9.90101 9.34505 10.1843 9.36685 10.4676 9.40318V12.9121H10.4386C10.3151 12.8758 10.1843 12.8394 10.0536 12.8177H9.9954C9.86466 12.8032 9.74114 12.7813 9.60309 12.7813C8.00491 12.7813 6.70448 14.0817 6.70448 15.6799C6.70448 17.2782 8.00491 18.5786 9.60309 18.5786C11.2014 18.5786 12.5018 17.2782 12.5018 15.6799V2.00037H15.938C15.938 2.29822 15.9671 2.58881 16.0179 2.87213C16.2649 4.1798 17.035 5.30584 18.1175 6.01053C18.873 6.50452 19.7593 6.78785 20.7182 6.78785V10.2241C18.9416 10.2241 17.288 9.65222 15.9453 8.68918Z"/></svg></a>
+        <a href="mailto:lebeatsuk@gmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.30606 7.28017C4.14002 7.62375 4.06901 7.99473 4.03469 8.4148C3.99999 8.83953 3.99999 9.36401 4 10.0143V13.9857C3.99999 14.6359 3.99999 15.1604 4.03469 15.5852C4.07042 16.0225 4.14591 16.4066 4.32698 16.7619C4.6146 17.3264 5.07354 17.7854 5.63803 18.073C5.9934 18.2541 6.37752 18.3296 6.81483 18.3653C7.23955 18.4 7.76404 18.4 8.4143 18.4H15.5857C16.236 18.4 16.7605 18.4 17.1852 18.3653C17.6225 18.3296 18.0066 18.2541 18.362 18.073C18.9265 17.7854 19.3854 17.3264 19.673 16.7619C19.8541 16.4066 19.9296 16.0225 19.9653 15.5852C20 15.1604 20 14.6359 20 13.9857V10.0143C20 9.36401 20 8.83953 19.9653 8.4148C19.931 7.99473 19.86 7.62375 19.6939 7.28017L13.8997 12.0209C12.7946 12.9251 11.2054 12.9251 10.1003 12.0209L4.30606 7.28017Z"/><path d="M18.9609 6.3295C18.7792 6.17262 18.5783 6.0372 18.362 5.92696C18.0066 5.74588 17.6225 5.6704 17.1852 5.63467C16.7605 5.59997 16.236 5.59997 15.5857 5.59998H8.41432C7.76406 5.59997 7.23955 5.59997 6.81483 5.63467C6.37752 5.6704 5.9934 5.74588 5.63803 5.92696C5.42166 6.0372 5.2208 6.17262 5.03915 6.3295L10.8602 11.0922C11.5232 11.6347 12.4768 11.6347 13.1398 11.0922L18.9609 6.3295Z"/></svg></a>
+        <a href="https://www.facebook.com/profile.php?id=61596560216885" aria-label="Facebook" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12C23 5.92487 18.0751 0.999996 12 0.999996C5.92488 0.999996 1 5.92487 1 12C1 17.1588 4.55146 21.4874 9.34266 22.6761V15.3614H7.07438V12H9.34266V10.5516C9.34266 6.80751 11.037 5.07215 14.7128 5.07215C15.4096 5.07215 16.6121 5.20877 17.104 5.34544V8.39261C16.8444 8.36529 16.3935 8.3516 15.8332 8.3516C14.0295 8.3516 13.3326 9.03484 13.3326 10.8112V12H16.9256L16.3084 15.3614H13.3326V22.9194C18.7792 22.2616 23 17.624 23 12Z"/></svg></a>
+      </nav>
+      <nav class="links" aria-label="Orders, social profiles and reviews">
+        <a href="https://www.ubereats.com/store/leb-eats/daoqcZHZTGej6fD-toGRIg"><img src="../assets/links-uber-eats.webp" width="48" height="48" alt=""><span>ORDER ON UBER EATS 🚚</span></a>
+        <a href="https://deliveroo.co.uk/menu/leicester/evington-valley/leb-eats-197-uppingham-road"><img src="../assets/links-deliveroo.webp" width="48" height="48" alt=""><span>ORDER ON DELIVEROO 🚚</span></a>
+        <a href="https://www.instagram.com/lebeatsuk"><img src="../assets/links-instagram-avatar.webp" width="48" height="48" alt=""><span>INSTAGRAM</span></a>
+        <a href="https://www.tiktok.com/@lebeatsuk"><img src="../assets/links-tiktok-avatar.webp" width="48" height="48" alt=""><span>TIKTOK</span></a>
+        <a href="https://share.google/FJBIpbPd4rjr58xO9"><img src="../assets/links-google-review.webp" width="48" height="48" alt=""><span>LEAVE A REVIEW!</span></a>
       </nav>
       <div class="details">
-        <h1>Coming soon</h1>
+        <h2>Coming soon</h2>
         <button id="signup" type="button" aria-controls="email-form" aria-expanded="false">Sign up now</button>
         <form id="email-form" hidden>
           <input id="email" type="email" aria-label="Email address" placeholder="Email address" autocomplete="email" required>
