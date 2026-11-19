@@ -334,3 +334,60 @@ nav.categories { display: flex; flex-wrap: wrap; }
 .instagram-follow svg { flex: none; width: 1.12em; height: 1.12em; }
 .instagram-follow:hover, .instagram-follow:focus-visible { color: var(--lime); }
 .instagram-follow:focus-visible { outline: 2px solid var(--lime); outline-offset: 4px; }
+
+@media (max-width: 900px) {
+  .menu-toggle, .nav-dialog .close-dialog { width: 44px; height: 44px; }
+  .desktop-nav a, .text-link, .menu-board-heading > a, .footer-bottom a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+  }
+  .footer-top a { min-height: 44px; min-width: 44px; }
+  .footer-top > div { gap: 4px 14px; font-size: 14px; }
+  .footer-bottom { align-items: center; font-size: 12px; }
+  .nav-content { height: auto; min-height: 100%; }
+}
+
+@media (max-width: 600px) {
+  html { scroll-padding-bottom: 68px; }
+  .hero { min-height: 0; }
+  .hero-copy .button, .mobile-order button { min-height: 44px; }
+  .hero-bottom { z-index: 3; bottom: 66px; }
+  .order-box { scroll-margin-top: 8px; }
+  .order-box p { font-size: 14px; line-height: 1.5; }
+  .footer-top > div { display: grid; grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 600px) and (max-height: 740px) and (orientation: portrait) {
+  .hero-top { top: 14px; }
+  .hero-copy, .hero .hero-second { top: 8%; }
+  .hero-copy h1 { font-size: clamp(40px, 8.5svh, 60px); }
+  .hero-copy p { margin: 8px 0 10px; line-height: 1.35; }
+  .hero .hero-second h2 { font-size: clamp(48px, 10svh, 72px); }
+  .food-stage { top: 52%; height: calc(48% - 102px); }
+  .food-stamp { width: 50px; height: 50px; font-size: 14px; right: 13%; }
+}
+
+@media (min-width: 520px) and (max-width: 960px) and (max-height: 500px) and (orientation: landscape) {
+  html { scroll-padding: 60px 0 0; }
+  .mobile-order { display: none; }
+  header { height: 56px; }
+  header .logo { width: 46px; }
+  .hero { min-height: 0; height: calc(100svh - 56px); }
+  .hero-top { top: 8px; left: 5%; right: 5%; }
+  .hero-copy, .hero .hero-second { top: 14%; left: 5%; right: 49%; text-align: left; }
+  .hero-copy h1, .hero .hero-second h2 { font-size: clamp(35px, 10svh, 50px); }
+  .hero-copy p { font-size: 12px; line-height: 1.35; margin: 8px 0; }
+  .hero-copy .button { min-height: 44px; padding: 8px 14px; }
+  .food-stage { left: 46%; top: 15%; width: 54%; height: 72%; }
+  .food-stamp { width: 48px; height: 48px; font-size: 13px; }
+  .hero-bottom { bottom: 0; left: 5%; right: 5%; z-index: 3; }
+  .nav-content { padding: 58px 6% 16px; }
+  .nav-content nav { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; }
+  .nav-content nav a { font-size: clamp(25px, 4.8vw, 40px); min-height: 44px; }
+  .nav-dialog .close-dialog { top: 8px; right: 5%; }
+}
+
+@media (min-width: 520px) and (max-width: 960px) and (max-height: 500px) and (orientation: landscape) and (prefers-reduced-motion: no-preference) {
+  .hero { top: 56px; }
+}

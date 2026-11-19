@@ -22,12 +22,15 @@ window.addEventListener("load", () => {
 }, { once: true });
 
 const heroTrack = document.querySelector(".hero-track");
-const heroCopy = heroTrack.querySelector(".hero-copy");
+const hero = heroTrack.querySelector(".hero");
+const heroCopy = hero.querySelector(".hero-copy");
+const header = document.querySelector("header");
 const motion = matchMedia("(prefers-reduced-motion: reduce)");
 let paintFrame = 0;
 function paintHero() {
-  const travel = Math.max(1, heroTrack.offsetHeight - innerHeight);
-  const progress = motion.matches ? 0 : Math.min(1, Math.max(0, -heroTrack.getBoundingClientRect().top / travel));
+  const travel = Math.max(1, heroTrack.offsetHeight - hero.offsetHeight);
+  const distance = header.offsetHeight - heroTrack.getBoundingClientRect().top;
+  const progress = motion.matches ? 0 : Math.min(1, Math.max(0, distance / travel));
   heroTrack.style.setProperty("--p", String(progress));
   heroCopy.inert = progress >= 1 / 2.8;
   heroCopy.style.visibility = heroCopy.inert ? "hidden" : "visible";
@@ -38,7 +41,6 @@ function schedulePaint() {
 }
 addEventListener("scroll", schedulePaint, { passive: true });
 addEventListener("resize", schedulePaint);
-const hero = heroTrack.querySelector(".hero");
 const secondPanel = hero.querySelector(".hero-second");
 function positionSecondPanel() {
   const parent = motion.matches ? heroTrack : hero;
@@ -63,8 +65,11 @@ for (const button of modeButtons) {
 }
 for (const button of document.querySelectorAll("[data-jump-mode]")) {
   button.addEventListener("click", () => {
-    selectMode(button.dataset.jumpMode);
-    document.getElementById("order").scrollIntoView();
+    const mode = button.dataset.jumpMode;
+    selectMode(mode);
+    const heading = document.querySelector("#" + mode + "-panel h3");
+    heading.focus({ preventScroll: true });
+    heading.closest(".order-box").scrollIntoView({ block: "start" });
   });
 }
 
