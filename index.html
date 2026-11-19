@@ -5,8 +5,8 @@
   <title>LEB EATS | Lebanese Grill in Leicester</title>
   <meta name="description" content="Explore the in-store menu at LEB EATS, 197 Uppingham Road, Leicester. Order delivery, call for collection or sign up for Black Card updates.">
   <meta name="theme-color" content="#780214"><link rel="canonical" href="https://lebeats.uk/">
-  <link rel="icon" href="/assets/logo.png"><link rel="stylesheet" href="/restaurant.css?v=student-headline">
-  <script defer src="/restaurant.js?v=phone-layout"></script>
+  <link rel="icon" href="/assets/logo.png"><link rel="stylesheet" href="/restaurant.css?v=black-card-form">
+  <script defer src="/restaurant.js?v=black-card-form"></script>
 </head>
 <body>
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
@@ -340,16 +340,22 @@
     <button type="button" class="card-close" aria-label="Close signup" autofocus>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     </button>
-    <div class="card-layout">
+    <div class="card-viewport"><div class="card-layout">
       <div class="card-art" aria-hidden="true">
         <div class="card-face"><img src="/assets/links-instagram-avatar.webp" alt="">Black Card</div>
       </div>
       <div class="card-copy">
         <h2 id="card-title">Black Card &amp; discounts</h2>
-        <p id="card-description">Hear when the Black Card launches and get LEB EATS discounts by email.</p>
-        <a class="card-action" href="mailto:lebeatsuk@gmail.com?subject=Black%20Card%20signup&amp;body=Hi%20LEB%20EATS%2C%20please%20sign%20me%20up%20for%20Black%20Card%20updates%20and%20discounts%20by%20email.">Sign up by email</a>
-        <small>Send the draft to lebeatsuk@gmail.com to request signup.</small>
+        <p id="card-description">Sign up for Black Card updates and LEB EATS discounts by email.</p>
+        <form id="card-form" action="https://leb-eats-black-card.raspy-waterfall-454f.workers.dev/signup" method="post">
+          <label for="card-name">Name</label>
+          <input id="card-name" name="name" type="text" autocomplete="name" maxlength="100" required>
+          <label for="card-email">Email</label>
+          <input id="card-email" name="email" type="email" autocomplete="email" inputmode="email" enterkeyhint="go" autocapitalize="none" spellcheck="false" maxlength="254" required>
+          <button class="card-action" type="submit">Sign up</button>
+        </form>
+        <p id="card-status" role="status" tabindex="-1"></p>
       </div>
-    </div>
+    </div></div>
   </dialog>
 </body></html>

@@ -44,10 +44,11 @@
       box-sizing: border-box; width: min(660px, calc(100% - 32px));
       max-height: calc(100dvh - 32px); padding: 0; border: 1px solid #ffffff30;
       border-radius: 18px; background: #171715; color: #fffaf1;
-      box-shadow: 0 24px 80px #16030066; overflow: auto;
+      box-shadow: 0 24px 80px #16030066; overflow: hidden;
     }
     #card-dialog::backdrop { background: rgb(22 6 5 / 74%); }
     body:has(dialog[open]) { overflow: hidden; }
+    .card-viewport { max-height: calc(100dvh - 36px); overflow: auto; overscroll-behavior: contain; }
     .card-layout { display: grid; grid-template-columns: 42% 58%; }
     .card-art {
       display: grid; place-items: center; min-height: 280px; overflow: hidden;
@@ -71,14 +72,26 @@
     .card-copy p { margin: 12px 0 20px; line-height: 1.45; color: #e6e0d7; }
     .card-action { display: inline-flex; padding: 12px 22px; border-radius: 30px; background: #fffaf1; color: #181715; font-weight: 700; text-decoration: none; }
     .card-action:hover { background: #e9dfcf; }
-    .card-copy small { display: block; margin-top: 12px; color: #cfc9c1; }
+    #card-form { display: grid; gap: 6px; }
+    #card-form label { font-size: 14px; font-weight: 700; }
+    #card-form input {
+      width: 100%; min-height: 44px; padding: 9px 12px; border: 1px solid #928e87;
+      border-radius: 6px; background: #262624; color: #fffaf1; font: inherit; font-size: 16px;
+    }
+    #card-form input + label { margin-top: 8px; }
+    #card-form input:focus-visible { outline: 2px solid var(--lime); outline-offset: 1px; }
+    #card-form .card-action { margin-top: 10px; min-height: 46px; justify-content: center; font-size: 16px; }
+    #card-form .card-action:disabled { opacity: .75; cursor: wait; }
+    #card-status { margin: 14px 0 0; }
+    #card-status:empty { margin: 0; }
+    #card-form[hidden] + #card-status { color: var(--lime); font-size: 18px; font-weight: 700; }
     .card-close { position: absolute; z-index: 1; top: 6px; right: 6px; width: 44px; height: 44px; padding: 11px; background: #171715; color: #fffaf1; }
     .card-close:hover { background: #383832; }
     .card-close svg { display: block; width: 100%; height: 100%; }
     @media (max-width: 540px) {
       .card-layout { grid-template-columns: 1fr; }
-      .card-art { min-height: 160px; }
-      .card-face { width: 155px; padding: 12px; }
+      .card-art { min-height: 112px; }
+      .card-face { width: 125px; padding: 10px; }
       .card-copy { padding: 23px 24px 26px; }
       .card-action { justify-content: center; width: 100%; }
     }

@@ -1,11 +1,68 @@
 const dialog = document.getElementById("card-dialog");
+const cardForm = document.getElementById("card-form");
+const cardStatus = document.getElementById("card-status");
+const cardSubmit = cardForm.querySelector("button");
+const cardName = cardForm.elements.namedItem("name");
+const cardEmail = cardForm.elements.namedItem("email");
+const cardDescription = document.getElementById("card-description");
 const seenKey = "lebeats.blackCardSignup.seen";
 let openTimer;
 function openSignup() {
   clearTimeout(openTimer);
+  if (cardForm.hidden) {
+    cardForm.hidden = false;
+    cardDescription.hidden = false;
+    cardStatus.textContent = "";
+  }
   if (!dialog.open) dialog.showModal();
   try { sessionStorage.setItem(seenKey, "1"); } catch {}
 }
+cardForm.addEventListener("submit", async event => {
+  event.preventDefault();
+  if (cardSubmit.disabled) return;
+  if (!cardName.value.trim()) {
+    cardName.setCustomValidity("Enter your name.");
+    cardName.reportValidity();
+    return;
+  }
+  cardStatus.textContent = "";
+  cardSubmit.disabled = true;
+  cardSubmit.textContent = "Signing up…";
+  cardName.readOnly = cardEmail.readOnly = true;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000);
+  try {
+    const response = await fetch(cardForm.action, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "omit",
+      signal: controller.signal,
+      body: JSON.stringify({ name: cardName.value.trim(), email: cardEmail.value.trim() })
+    });
+    if (!response.ok) {
+      const messages = {
+        422: "Check your name and email, then try again.",
+        429: "Please wait a minute and try again."
+      };
+      cardStatus.textContent = messages[response.status] || "We couldn’t confirm your signup. Please try again.";
+      return;
+    }
+    if ((await response.json()).saved !== true) throw new Error("Unconfirmed signup");
+    cardForm.reset();
+    cardForm.hidden = true;
+    cardDescription.hidden = true;
+    cardStatus.textContent = "You’re on the list for Black Card updates and discounts.";
+    if (dialog.open) cardStatus.focus({ preventScroll: true });
+  } catch {
+    cardStatus.textContent = "We couldn’t confirm your signup. Check your connection and try again.";
+  } finally {
+    clearTimeout(timeout);
+    cardSubmit.disabled = false;
+    cardSubmit.textContent = "Sign up";
+    cardName.readOnly = cardEmail.readOnly = false;
+  }
+});
+cardName.addEventListener("input", () => cardName.setCustomValidity(""));
 for (const button of document.querySelectorAll(".open-card")) {
   button.addEventListener("click", openSignup);
 }
