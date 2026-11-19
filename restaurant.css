@@ -251,31 +251,12 @@ nav.categories { display: flex; flex-wrap: wrap; }
   color: var(--ink);
   padding: clamp(20px, 2.5vw, 36px) 0 clamp(24px, 3vw, 40px);
 }
-.reviews-header {
-  margin: 0 var(--review-inset) 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.reviews-header h2 {
-  font: 700 clamp(20px, 2.2vw, 30px)/1.2 "Helvetica Neue", Helvetica, Arial, sans-serif;
-  letter-spacing: -.025em;
+#reviews-heading {
+  margin: 0 var(--review-inset) clamp(14px, 1.6vw, 22px);
+  font-size: clamp(30px, 3.2vw, 46px);
+  line-height: 1;
   color: var(--green);
 }
-.reviews-actions { display: flex; align-items: center; gap: clamp(8px, 1.5vw, 20px); }
-.reviews-actions a { font-size: 13px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
-.reviews-actions a:focus-visible, .reviews-motion:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
-.reviews-motion {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #dae2ce;
-  color: var(--green);
-}
-.reviews-motion:hover { background: #ced9bf; }
 .reviews-window { margin-inline: var(--review-inset); }
 .reviews-list {
   display: grid;
@@ -294,7 +275,7 @@ nav.categories { display: flex; flex-wrap: wrap; }
 .review-card figcaption { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; font-weight: 700; }
 .review-card figcaption svg { color: #98691a; fill: currentColor; flex: none; }
 .review-card blockquote { margin-top: 11px; font-size: 15px; line-height: 1.5; }
-.reviews-list[aria-hidden="true"], .reviews-play-icon { display: none; }
+.reviews-list[aria-hidden="true"] { display: none; }
 
 @media (prefers-reduced-motion: no-preference) {
   .google-reviews.is-moving .reviews-window {
@@ -314,11 +295,5 @@ nav.categories { display: flex; flex-wrap: wrap; }
     grid-auto-columns: max(clamp(240px, 73vw, 330px), calc(100vw / 6));
     padding-inline-end: var(--review-gap);
   }
-  .google-reviews[data-paused] .reviews-track { animation-play-state: paused; }
-  .google-reviews[data-paused] .reviews-pause-icon { display: none; }
-  .google-reviews[data-paused] .reviews-play-icon { display: block; }
   @keyframes reviews-slide { to { transform: translateX(-50%); } }
-}
-@media (prefers-reduced-motion: reduce) {
-  .reviews-motion { display: none; }
 }
