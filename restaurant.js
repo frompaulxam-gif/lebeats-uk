@@ -38,7 +38,15 @@ function schedulePaint() {
 }
 addEventListener("scroll", schedulePaint, { passive: true });
 addEventListener("resize", schedulePaint);
-motion.addEventListener("change", schedulePaint);
+const hero = heroTrack.querySelector(".hero");
+const secondPanel = hero.querySelector(".hero-second");
+function positionSecondPanel() {
+  const parent = motion.matches ? heroTrack : hero;
+  if (secondPanel.parentElement !== parent) parent.append(secondPanel);
+  schedulePaint();
+}
+motion.addEventListener("change", positionSecondPanel);
+positionSecondPanel();
 paintHero();
 
 const filters = document.querySelectorAll("[data-filter]");
