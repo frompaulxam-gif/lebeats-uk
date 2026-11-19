@@ -26,14 +26,9 @@
     .links a:hover, button:hover { background: #fff2ee; }
     .details { margin-top: 28px; }
     h2 { margin: 0 0 10px; font-size: 19px; }
-    button, input { min-height: 44px; border-radius: 24px; font: inherit; }
+    button { min-height: 44px; border-radius: 24px; font: inherit; }
     button { padding: 9px 20px; border: 0; background: #fff; color: #5a0a03; font-weight: 700; cursor: pointer; }
-    :is(a, button, input):focus-visible { outline: 2px solid white; outline-offset: 3px; }
-    form { display: grid; gap: 9px; justify-items: center; }
-    [hidden] { display: none; }
-    input { width: min(100%, 340px); padding: 10px 16px; border: 1px solid white; color: white; background: transparent; }
-    input::placeholder { color: white; opacity: .82; }
-    #status { margin: 0; font-size: 15px; }
+    :is(a, button):focus-visible { outline: 2px solid white; outline-offset: 3px; }
     .jump { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 20px; margin: -12px 0 16px; }
     .jump a, .info a, .linktree { color: inherit; text-underline-offset: 4px; }
     .jump a, .linktree { display: inline-flex; align-items: center; min-height: 44px; }
@@ -48,7 +43,6 @@
     .faq details { border-bottom: 1px solid #ffffff38; }
     .faq summary { min-height: 44px; padding: 12px 0; cursor: pointer; font-weight: 600; }
     .faq details p { margin: 0 0 14px; }
-    form small { max-width: 340px; }
     .linktree { margin-top: 14px; }
     @media (max-width: 620px) {
       html { background: #5a0a03; }
@@ -56,6 +50,49 @@
       .brand { padding: 36px 14px max(26px, env(safe-area-inset-bottom)); border-radius: 0; }
       .bio { max-width: 270px; }
       .links a { font-size: 14px; }
+    }
+    .reward .open-card { margin-top: 6px; }
+    #card-dialog {
+      box-sizing: border-box; width: min(660px, calc(100% - 32px));
+      max-height: calc(100dvh - 32px); padding: 0; border: 1px solid #ffffff30;
+      border-radius: 18px; background: #171715; color: #fffaf1;
+      box-shadow: 0 24px 80px #16030066; overflow: auto;
+    }
+    #card-dialog::backdrop { background: rgb(22 6 5 / 74%); }
+    body:has(#card-dialog[open]) { overflow: hidden; }
+    .card-layout { display: grid; grid-template-columns: 42% 58%; }
+    .card-art {
+      display: grid; place-items: center; min-height: 280px; overflow: hidden;
+      background: radial-gradient(ellipse at 20% 0%, #a7112d, #780214 66%, #520714);
+    }
+    .card-face {
+      position: relative; isolation: isolate; overflow: hidden; display: flex;
+      align-items: end; width: 79%; aspect-ratio: 1.586; padding: 8%;
+      background: linear-gradient(135deg, #34342f, #111 70%); color: #f3eddc;
+      border: 1px solid #979488; border-radius: 12px;
+      transform: rotate(-9deg); box-shadow: 0 14px 22px #27000675;
+      font-weight: 700; font-size: clamp(18px, 4vw, 27px); letter-spacing: -.05em;
+    }
+    .card-face::before {
+      content: ""; position: absolute; inset: 0; z-index: -1;
+      background: repeating-radial-gradient(circle at 109% 0%, transparent 0 10px, #aaa79733 11px, transparent 12px);
+    }
+    .card-face img { position: absolute; top: 14%; left: 9%; width: 22%; border-radius: 50%; }
+    .card-copy { padding: 52px 30px 32px; }
+    .card-copy h2 { font-size: clamp(28px, 4vw, 38px); line-height: 1.05; letter-spacing: -.045em; }
+    .card-copy p { margin: 12px 0 20px; line-height: 1.45; color: #e6e0d7; }
+    .card-action { display: inline-flex; padding: 12px 22px; border-radius: 30px; background: #fffaf1; color: #181715; font-weight: 700; text-decoration: none; }
+    .card-action:hover { background: #e9dfcf; }
+    .card-copy small { display: block; margin-top: 12px; color: #cfc9c1; }
+    .card-close { position: absolute; z-index: 1; top: 6px; right: 6px; width: 44px; height: 44px; padding: 11px; background: #171715; color: #fffaf1; }
+    .card-close:hover { background: #383832; }
+    .card-close svg { display: block; width: 100%; height: 100%; }
+    @media (max-width: 540px) {
+      .card-layout { grid-template-columns: 1fr; }
+      .card-art { min-height: 160px; }
+      .card-face { width: 155px; padding: 12px; }
+      .card-copy { padding: 23px 24px 26px; }
+      .card-action { justify-content: center; width: 100%; }
     }
   </style>
 </head>
@@ -83,20 +120,14 @@
       </nav>
       <div class="details">
         <h2>Website coming soon</h2>
-        <button id="signup" type="button" aria-controls="email-form" aria-expanded="false">Sign up now</button>
-        <form id="email-form" hidden>
-          <small>Preview only. Email and SMS subscriptions open soon.</small>
-          <input id="email" type="email" aria-label="Email address" placeholder="Email address" autocomplete="email" required>
-          <input type="tel" aria-label="Mobile number for SMS updates (optional)" placeholder="Mobile number for SMS (optional)" autocomplete="tel">
-          <button type="submit">Enter your email</button>
-        </form>
-        <p id="status" role="status"></p>
+        <button class="open-card" type="button" aria-haspopup="dialog" aria-controls="card-dialog">Sign up now</button>
       </div>
       <section class="info reward" id="black-card">
         <small>Coming soon</small>
         <h2>The Black Card</h2>
         <p>Earn rewards when you order directly with LEB EATS. After four direct orders, get a <strong>£5 reward</strong>. After eight, choose <strong>a free Leb Box</strong>.</p>
         <p>Uber Eats and Deliveroo orders do not count towards Black Card rewards.</p>
+        <button class="open-card" type="button" aria-haspopup="dialog" aria-controls="card-dialog">Get Black Card updates</button>
       </section>
       <section class="info" id="visit">
         <h2>Hours &amp; location</h2>
@@ -124,22 +155,45 @@
       <a class="linktree" href="https://linktr.ee/lebeatsuk">LEB EATS on Linktree</a>
     </div>
   </main>
+  <dialog id="card-dialog" aria-labelledby="card-title" aria-describedby="card-description">
+    <button type="button" class="card-close" aria-label="Close signup" autofocus>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="card-layout">
+      <div class="card-art" aria-hidden="true">
+        <div class="card-face"><img src="../assets/links-instagram-avatar.webp" alt="">Black Card</div>
+      </div>
+      <div class="card-copy">
+        <h2 id="card-title">Black Card &amp; discounts</h2>
+        <p id="card-description">Hear when the Black Card launches and get LEB EATS discounts by email.</p>
+        <a class="card-action" href="mailto:lebeatsuk@gmail.com?subject=Black%20Card%20signup&amp;body=Hi%20LEB%20EATS%2C%20please%20sign%20me%20up%20for%20Black%20Card%20updates%20and%20discounts%20by%20email.">Sign up by email</a>
+        <small>Send the draft to lebeatsuk@gmail.com to request signup.</small>
+      </div>
+    </div>
+  </dialog>
   <script>
-    const signup = document.getElementById("signup");
-    const form = document.getElementById("email-form");
-    const email = document.getElementById("email");
-    signup.addEventListener("click", () => {
-      signup.setAttribute("aria-expanded", "true");
-      signup.hidden = true;
-      form.hidden = false;
-      email.focus();
+    const dialog = document.getElementById("card-dialog");
+    const seenKey = "lebeats.blackCardSignup.seen";
+    let openTimer;
+    function openSignup() {
+      clearTimeout(openTimer);
+      if (!dialog.open) dialog.showModal();
+      try { sessionStorage.setItem(seenKey, "1"); } catch {}
+    }
+    for (const button of document.querySelectorAll(".open-card")) {
+      button.addEventListener("click", openSignup);
+    }
+    dialog.querySelector(".card-close").addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", event => {
+      if (event.target !== dialog) return;
+      const bounds = dialog.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right ||
+          event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
     });
-    form.addEventListener("submit", event => {
-      event.preventDefault();
-      form.reset();
-      form.hidden = true;
-      document.getElementById("status").textContent = "Signups open soon. Thanks for your interest!";
-    });
+    window.addEventListener("load", () => {
+      try { if (sessionStorage.getItem(seenKey)) return; } catch {}
+      openTimer = setTimeout(openSignup, 1500);
+    }, { once: true });
   </script>
 </body>
 </html>
