@@ -49,6 +49,7 @@ motion.addEventListener("change", positionSecondPanel);
 positionSecondPanel();
 paintHero();
 
+const highlights = document.querySelector(".menu-highlights");
 const filters = document.querySelectorAll("[data-filter]");
 for (const filter of filters) {
   filter.addEventListener("click", () => {
@@ -56,8 +57,13 @@ for (const filter of filters) {
       other.setAttribute("aria-pressed", String(other === filter));
       other.classList.toggle("active", other === filter);
     }
-    for (const card of document.querySelectorAll("[data-category]")) {
-      card.hidden = filter.dataset.filter !== "All" && card.dataset.category !== filter.dataset.filter;
+    const selection = filter.dataset.filter;
+    highlights.dataset.view = selection;
+    for (const card of highlights.querySelectorAll("[data-category]")) {
+      const matches = selection === "best-sellers"
+        ? card.hasAttribute("data-best-seller")
+        : selection === "All" || card.dataset.category === selection;
+      card.hidden = !matches;
     }
   });
 }
