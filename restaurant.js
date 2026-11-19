@@ -86,3 +86,12 @@ repeatReviews.setAttribute("aria-hidden", "true");
 repeatReviews.inert = true;
 reviewTrack.append(repeatReviews);
 reviews.classList.add("is-moving");
+
+const playback = reviews.querySelector(".review-playback");
+playback.hidden = false;
+playback.addEventListener("click", () => {
+  const paused = reviews.toggleAttribute("data-paused");
+  const label = paused ? "Resume scrolling reviews" : "Pause scrolling reviews";
+  playback.setAttribute("aria-label", label);
+  playback.title = label;
+});
