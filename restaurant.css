@@ -50,68 +50,90 @@
 .links-hub-button:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
 
 .public-updates{padding:64px 38px 40px;max-width:470px;margin:auto}.public-updates h2{font-size:58px}.public-updates>p:not(.eyebrow){font-size:13px;margin:24px 0}.public-updates small{display:block;font-size:11px;margin-top:18px}@media(max-width:600px){.public-updates{padding:56px 27px 30px}.public-updates h2{font-size:49px}}
-    #card-dialog {
-      box-sizing: border-box; width: min(660px, calc(100% - 32px));
-      max-height: calc(100dvh - 32px); padding: 0; border: 1px solid #ffffff30;
-      border-radius: 18px; background: #171715; color: #fffaf1;
-      box-shadow: 0 24px 80px #16030066; overflow: hidden;
-    }
-    #card-dialog::backdrop { background: rgb(22 6 5 / 74%); }
-    body:has(dialog[open]) { overflow: hidden; }
-    .card-viewport { max-height: calc(100dvh - 36px); overflow: auto; overscroll-behavior: contain; }
-    .card-layout { display: grid; grid-template-columns: 42% 58%; }
-    .card-art {
-      display: grid; place-items: center; min-height: 280px; overflow: hidden;
-      background: radial-gradient(ellipse at 20% 0%, #a7112d, #780214 66%, #520714);
-    }
-    .card-face {
-      position: relative; isolation: isolate; overflow: hidden; display: flex;
-      align-items: end; width: 79%; aspect-ratio: 1.586; padding: 8%;
-      background: linear-gradient(135deg, #34342f, #111 70%); color: #f3eddc;
-      border: 1px solid #979488; border-radius: 12px;
-      transform: rotate(-9deg); box-shadow: 0 14px 22px #27000675;
-      font-weight: 700; font-size: clamp(18px, 4vw, 27px); letter-spacing: -.05em;
-    }
-    .card-face::before {
-      content: ""; position: absolute; inset: 0; z-index: -1;
-      background: repeating-radial-gradient(circle at 109% 0%, transparent 0 10px, #aaa79733 11px, transparent 12px);
-    }
-    .card-face img { position: absolute; top: 14%; left: 9%; width: 22%; border-radius: 50%; }
-    .card-copy { padding: 52px 30px 32px; }
-    .card-copy h2 { font-size: clamp(28px, 4vw, 38px); line-height: 1.05; letter-spacing: -.045em; }
-    .card-copy p { margin: 12px 0 20px; line-height: 1.45; color: #e6e0d7; }
-    .card-action { display: inline-flex; padding: 12px 22px; border-radius: 30px; background: #fffaf1; color: #181715; font-weight: 700; text-decoration: none; }
-    .card-action:hover { background: #e9dfcf; }
-    #card-form { display: grid; gap: 6px; }
-    #card-form label { font-size: 14px; font-weight: 700; }
-    #card-form input {
-      width: 100%; min-height: 44px; padding: 9px 12px; border: 1px solid #928e87;
-      border-radius: 6px; background: #262624; color: #fffaf1; font: inherit; font-size: 16px;
-    }
-    #card-form input + label { margin-top: 8px; }
-    #card-form input:focus-visible { outline: 2px solid var(--lime); outline-offset: 1px; }
-    #card-form .card-action { margin-top: 10px; min-height: 46px; justify-content: center; font-size: 16px; }
-    #card-form .card-action:disabled { opacity: .75; cursor: wait; }
-    #card-status { margin: 14px 0 0; }
-    #card-status:empty { margin: 0; }
-    #card-form[hidden] + #card-status { color: var(--lime); font-size: 18px; font-weight: 700; }
-    .card-close { position: absolute; z-index: 1; top: 6px; right: 6px; width: 44px; height: 44px; padding: 11px; background: #171715; color: #fffaf1; }
-    .card-close:hover { background: #383832; }
-    .card-close svg { display: block; width: 100%; height: 100%; }
-    @media (max-width: 540px) {
-      .card-layout { grid-template-columns: 1fr; }
-      .card-art { min-height: 112px; }
-      .card-face { width: 125px; padding: 10px; }
-      .card-copy { padding: 23px 24px 26px; }
-      .card-action { justify-content: center; width: 100%; }
-    }
-
-#card-dialog { font-family: "Helvetica Neue", Arial, sans-serif; line-height: 1.45; }
-#card-dialog h2 { font-family: inherit; font-weight: 700; }
-.card-close { border-radius: 50%; }
-.card-close:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
-.card-action:focus-visible { outline: 2px solid #181715; outline-offset: -4px; }
-.card-action { border-radius: 30px; }
+#card-dialog {
+  color-scheme: light;
+  --card-surface: #f8f4ea;
+  --card-text: #19271d;
+  --card-muted: #4e594e;
+  --card-input: #fffcf6;
+  --card-line: #888c7d;
+  --card-example: #666e63;
+  --card-button: #11492b;
+  --card-button-text: white;
+  --card-focus: #186bb0;
+  --card-art: #d0df82;
+  width: min(410px, calc(100% - 24px));
+  max-height: calc(100dvh - 24px);
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: var(--card-surface);
+  color: var(--card-text);
+  overflow: auto;
+  overscroll-behavior: contain;
+  line-height: 1.45;
+}
+#card-dialog::backdrop { background: #112119a8; backdrop-filter: blur(4px); }
+body:has(dialog[open]) { overflow: hidden; }
+.card-art { position: relative; isolation: isolate; height: 126px; overflow: hidden; background: var(--card-art); }
+.card-brand { position: absolute; top: 22px; left: 8%; width: 57px; transform: rotate(-8deg); z-index: 1; }
+.card-food {
+  position: absolute; inset: -31% -16% -40% 14%; transform: rotate(-6deg);
+  background: url("/assets/leb-box-1-480.webp") center / cover no-repeat;
+  mask: url("/assets/leb-box-1-mask.svg") center / cover no-repeat;
+}
+.card-close {
+  position: absolute; z-index: 2; top: 8px; right: 8px; width: 44px; height: 44px;
+  display: grid; place-items: center; padding: 0; border-radius: 50%; background: #181b17; color: #fff9eb; font: 29px/1 Arial;
+}
+.card-copy { padding: clamp(18px, 1.8vw, 27px); }
+#card-title { font: 900 clamp(33px, 2.7vw, 42px)/.98 LebDisplay, Impact, sans-serif; letter-spacing: 0; }
+#card-description { margin: 9px 0 19px; font-size: 14px; color: var(--card-muted); }
+#card-form { display: grid; gap: 12px; }
+#card-form label { display: block; font-size: 13px; font-weight: 700; }
+.card-optional { font-weight: 400; color: var(--card-muted); }
+#card-form input, .card-phone-row {
+  width: 100%; min-width: 0; margin-top: 4px; border: 1px solid var(--card-line);
+  border-radius: 5px; background: var(--card-input); color: var(--card-text);
+}
+#card-form input { display: block; min-height: 44px; padding: 9px 12px; font: inherit; font-weight: 400; font-size: 16px; }
+#card-form input::placeholder { color: var(--card-example); opacity: 1; }
+#card-form input:autofill { box-shadow: 0 0 0 50px var(--card-input) inset; -webkit-text-fill-color: var(--card-text); caret-color: var(--card-text); }
+.card-phone-row { display: flex; align-items: stretch; }
+.card-country { position: relative; flex: none; border-right: 1px solid var(--card-line); border-radius: 5px 0 0 5px; }
+.card-country-face { min-width: 99px; height: 44px; padding: 0 10px; display: flex; gap: 5px; align-items: center; justify-content: center; font-weight: 700; }
+#card-flag { font-size: 17px; }
+.card-chevron { width: 6px; height: 6px; margin: -3px 0 0 2px; border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); }
+.card-country select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 16px; }
+.card-country select, .card-country option { color: var(--card-text); background-color: var(--card-input); }
+#card-form .card-phone-row input { border: 0; margin: 0; border-radius: 0 5px 5px 0; flex: 1; }
+.card-action { min-height: 46px; margin-top: 4px; border-radius: 5px; background: var(--card-button); color: var(--card-button-text); font-size: 16px; font-weight: 700; }
+.card-action:hover, .card-close:hover { filter: brightness(.93); }
+#card-dialog :is(input, button):focus-visible, .card-country:focus-within { outline: 3px solid var(--card-focus); outline-offset: 2px; z-index: 2; }
+#card-dialog .card-close:focus-visible { outline-color: #fff; outline-offset: -4px; }
+#card-status:not(:empty) { margin-top: 14px; color: var(--card-text); }
+#card-form[hidden] + #card-status { font-weight: 700; }
+@media (prefers-color-scheme: dark) {
+  #card-dialog {
+    color-scheme: dark;
+    --card-surface: #202820; --card-text: #f7f5e7; --card-muted: #d1d8ca; --card-input: #2a342c;
+    --card-line: #859282; --card-example: #bdc8b8; --card-button: #cfdf91; --card-button-text: #17321c;
+    --card-focus: #a7d3ff; --card-art: #9cac64;
+  }
+  #card-dialog::backdrop { background: #070d0bbd; }
+}
+@media (max-width: 680px) {
+  .card-art { height: 111px; }
+  .card-copy { padding: 18px; }
+  #card-title { font-size: 36px; }
+}
+@media (max-width: 360px), (max-height: 645px) {
+  .card-art { height: 78px; }
+  .card-copy { padding: 15px; }
+  #card-title { font-size: 31px; }
+  #card-description { margin-bottom: 10px; }
+  #card-form { gap: 8px; }
+}
 .menu-board-grid > .menu-board-group { grid-column: auto; grid-row: auto; }
 .menu-board-group dl { margin: 0; }
 .menu-board-group .dish { display: grid; grid-template-columns: 1fr auto; gap: 6px 14px; padding: 15px 20px; border-top: 1px solid #78021422; }
@@ -269,14 +291,6 @@ nav.categories { display: flex; flex-wrap: wrap; }
   .menu-highlights .dish-card { display: grid; grid-template-columns: 39% 1fr; align-items: center; gap: 20px; }
   .menu-highlights .dish-copy { padding-top: 0; }
 }
-#card-form label span { color: #cfc9c1; font-weight: 400; }
-@media (max-height: 740px) and (max-width: 540px) {
-  .card-art { min-height: 72px; }
-  .card-face { width: 86px; padding: 7px; font-size: 13px; border-radius: 6px; }
-  .card-copy { padding: 16px 20px 20px; }
-  .card-copy p { margin-block: 8px 12px; }
-}
-
 .google-reviews {
   --review-gap: clamp(12px, 1.45vw, 22px);
   --review-inset: clamp(18px, 6vw, 120px);

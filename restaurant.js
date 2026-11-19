@@ -5,6 +5,33 @@ const cardSubmit = cardForm.querySelector("button");
 const cardName = cardForm.elements.namedItem("name");
 const cardEmail = cardForm.elements.namedItem("email");
 const cardPhone = cardForm.elements.namedItem("phone");
+const cardCountry = cardForm.elements.namedItem("country");
+const cardActionLabel = cardSubmit.textContent;
+const phoneLibrary = window.libphonenumber;
+const phoneExamples = { GB: "7700 900123", IE: "85 123 4567", US: "202 555 0142", CA: "416 555 0142", FR: "6 12 34 56 78", LB: "71 123 456" };
+
+function countryFlag(code) {
+  return String.fromCodePoint(...Array.from(code, letter => 127397 + letter.charCodeAt(0)));
+}
+if (phoneLibrary) {
+  const names = typeof Intl.DisplayNames === "function" ? new Intl.DisplayNames(["en-GB"], { type: "region" }) : null;
+  const countryOptions = phoneLibrary.getCountries()
+    .map(code => ({ code, name: names?.of(code) || code }))
+    .sort((a, b) => a.name.localeCompare(b.name, "en-GB"))
+    .map(({ code, name }) => new Option(
+      countryFlag(code) + " " + name + " (+" + phoneLibrary.getCountryCallingCode(code) + ")",
+      code, code === "GB", code === "GB"
+    ));
+  cardCountry.replaceChildren(...countryOptions);
+}
+function syncCardCountry() {
+  const code = cardCountry.value;
+  document.getElementById("card-flag").textContent = countryFlag(code);
+  document.getElementById("card-dial").textContent = "+" + (phoneLibrary?.getCountryCallingCode(code) || "44");
+  cardPhone.placeholder = phoneExamples[code] || "Phone number";
+  cardPhone.setCustomValidity("");
+}
+cardCountry.addEventListener("change", syncCardCountry);
 const cardDescription = document.getElementById("card-description");
 const seenKey = "lebeats.blackCardSignup.seen";
 let openTimer;
@@ -26,15 +53,23 @@ cardForm.addEventListener("submit", async event => {
     cardName.reportValidity();
     return;
   }
-  const phone = cardPhone.value.trim();
-  const digits = phone.replace(/[^0-9]/g, "");
-  if (phone && (!/^\+?[0-9 ().-]+$/.test(phone) || digits.length < 7 || digits.length > 15)) {
-    cardPhone.setCustomValidity("Enter a valid phone number or leave this field blank.");
-    cardPhone.reportValidity();
-    return;
+  const phoneInput = cardPhone.value.trim();
+  let phone = "";
+  if (phoneInput) {
+    if (!phoneLibrary) {
+      cardStatus.textContent = "The phone field couldn’t load. Refresh the page or leave the number blank.";
+      return;
+    }
+    const number = phoneLibrary.parsePhoneNumberFromString(phoneInput, { defaultCountry: cardCountry.value, extract: false });
+    if (!number?.isPossible() || number.ext) {
+      cardPhone.setCustomValidity("Check the country code and phone number, or leave it blank.");
+      cardPhone.reportValidity();
+      return;
+    }
+    phone = number.number;
   }
   cardStatus.textContent = "";
-  cardSubmit.disabled = true;
+  cardCountry.disabled = cardSubmit.disabled = true;
   cardSubmit.textContent = "Signing up…";
   cardName.readOnly = cardEmail.readOnly = cardPhone.readOnly = true;
   const controller = new AbortController();
@@ -62,6 +97,7 @@ cardForm.addEventListener("submit", async event => {
     }
     if ((await response.json()).saved !== true) throw new Error("Unconfirmed signup");
     cardForm.reset();
+    syncCardCountry();
     cardForm.hidden = true;
     cardDescription.hidden = true;
     cardStatus.textContent = "You’re on the list for Loyalty Card updates and discounts.";
@@ -70,8 +106,8 @@ cardForm.addEventListener("submit", async event => {
     cardStatus.textContent = "We couldn’t confirm your signup. Check your connection and try again.";
   } finally {
     clearTimeout(timeout);
-    cardSubmit.disabled = false;
-    cardSubmit.textContent = "Sign up";
+    cardCountry.disabled = cardSubmit.disabled = false;
+    cardSubmit.textContent = cardActionLabel;
     cardName.readOnly = cardEmail.readOnly = cardPhone.readOnly = false;
   }
 });

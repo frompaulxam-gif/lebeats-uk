@@ -5,8 +5,9 @@
   <title>LEB EATS | Lebanese Grill in Leicester</title>
   <meta name="description" content="Explore the in-store menu at LEB EATS, 197 Uppingham Road, Leicester. Order delivery, call for collection or sign up for Loyalty Card updates.">
   <meta name="theme-color" content="#780214"><link rel="canonical" href="https://lebeats.uk/">
-  <link rel="icon" href="/assets/logo.png"><link rel="stylesheet" href="/restaurant.css?v=leb-box-hero">
-  <script defer src="/restaurant.js?v=loyalty-menu"></script>
+  <link rel="icon" href="/assets/logo.png"><link rel="stylesheet" href="/restaurant.css?v=meal-popup">
+  <script defer src="/assets/libphonenumber/phone.js"></script>
+  <script defer src="/restaurant.js?v=meal-popup"></script>
 </head>
 <body>
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
@@ -338,27 +339,30 @@
 <div class="mobile-order"><button data-jump-mode="delivery"><svg width="18" height="18" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="7" cy="23" r="5"></circle><circle cx="25" cy="23" r="5"></circle><path d="m7 23 6-12 6 12H7m-2-14h9m5 14 5-16h-5m4 3 2 13"></path></svg>Delivery</button><button data-jump-mode="pickup"><svg width="18" height="18" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 11h18l2 17H5l2-17Z"></path><path d="M12 13V8a4 4 0 0 1 8 0v5M12 22h8"></path></svg>Pickup</button></div>
 <dialog class="nav-dialog" id="nav-dialog" aria-label="Restaurant navigation"><div class="nav-content"><button class="close-dialog" aria-label="Close navigation"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><nav><a href="#menu">The menu</a><a href="#story">Our flavour</a><a href="#order">Delivery &amp; pickup</a><a href="#loyalty-card">Loyalty Card</a><a href="#find-us">Find us</a><a href="#faq">FAQs</a></nav></div></dialog>
 <dialog id="card-dialog" aria-labelledby="card-title" aria-describedby="card-description">
-    <button type="button" class="card-close" aria-label="Close signup" autofocus>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
-    <div class="card-viewport"><div class="card-layout">
-      <div class="card-art" aria-hidden="true">
-        <div class="card-face"><img src="/assets/links-instagram-avatar.webp" alt="">Loyalty Card</div>
+  <button type="button" class="card-close" aria-label="Close signup" autofocus>×</button>
+  <div class="card-art" aria-hidden="true">
+    <svg class="card-brand" viewBox="0 0 533 459"><use href="#brand-badge" width="533" height="459"/></svg>
+    <div class="card-food"></div>
+  </div>
+  <div class="card-copy">
+    <h2 id="card-title">GET A CHANCE FOR A FREE MEAL</h2>
+    <p id="card-description">Sign up for Loyalty Card updates and LEB EATS discounts by email.</p>
+    <form id="card-form" action="https://leb-eats-black-card.raspy-waterfall-454f.workers.dev/signup" method="post">
+      <label>Full name<input id="card-name" name="name" type="text" autocomplete="name" enterkeyhint="next" maxlength="100" placeholder="Alex Taylor" required></label>
+      <label>Email address<input id="card-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" enterkeyhint="next" maxlength="254" placeholder="alex@example.com" required></label>
+      <div>
+        <label for="card-phone">Phone number <span class="card-optional">(optional)</span></label>
+        <div class="card-phone-row">
+          <div class="card-country">
+            <span class="card-country-face" aria-hidden="true"><span id="card-flag">🇬🇧</span><span id="card-dial">+44</span><span class="card-chevron"></span></span>
+            <select name="country" aria-label="Country calling code" autocomplete="country"><option value="GB" selected>🇬🇧 United Kingdom (+44)</option></select>
+          </div>
+          <input id="card-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" enterkeyhint="go" maxlength="40" placeholder="7700 900123">
+        </div>
       </div>
-      <div class="card-copy">
-        <h2 id="card-title">Loyalty Card &amp; discounts</h2>
-        <p id="card-description">Sign up for Loyalty Card updates and LEB EATS discounts by email.</p>
-        <form id="card-form" action="https://leb-eats-black-card.raspy-waterfall-454f.workers.dev/signup" method="post">
-          <label for="card-name">Name</label>
-          <input id="card-name" name="name" type="text" autocomplete="name" maxlength="100" required>
-          <label for="card-email">Email</label>
-          <input id="card-email" name="email" type="email" autocomplete="email" inputmode="email" enterkeyhint="go" autocapitalize="none" spellcheck="false" maxlength="254" required>
-          <label for="card-phone">Phone number <span>(optional)</span></label>
-          <input id="card-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" enterkeyhint="go" maxlength="40">
-          <button class="card-action" type="submit">Sign up</button>
-        </form>
-        <p id="card-status" role="status" tabindex="-1"></p>
-      </div>
-    </div></div>
-  </dialog>
+      <button class="card-action" type="submit">Count me in</button>
+    </form>
+    <p id="card-status" role="status" tabindex="-1"></p>
+  </div>
+</dialog>
 </body></html>
