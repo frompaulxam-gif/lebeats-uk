@@ -1,5 +1,6 @@
 const origins = new Set(["https://lebeats.uk", "https://www.lebeats.uk"]);
-const consentText = "Sign up for Black Card updates and LEB EATS discounts by email.";
+const originalConsent = "Sign up for Black Card updates and LEB EATS discounts by email.";
+const loyaltyConsent = "Sign up for Loyalty Card updates and LEB EATS discounts by email.";
 const maxBytes = 4096;
 
 async function readSignup(request) {
@@ -49,9 +50,18 @@ export default {
           || email.length > 254 || !/^[^\s@\u0000-\u001f\u007f]+@[^\s@\u0000-\u001f\u007f]+\.[^\s@\u0000-\u001f\u007f]+$/u.test(email)) {
         return new Response(null, { status: 422, headers });
       }
+      if (data.phone != null && typeof data.phone !== "string") return new Response(null, { status: 422, headers });
+      const phone = data.phone?.trim() || null;
+      if (phone) {
+        const digits = phone.replace(/[^0-9]/g, "");
+        if (phone.length > 40 || !/^\+?[0-9 ().-]+$/.test(phone) || digits.length < 7 || digits.length > 15) {
+          return new Response(null, { status: 422, headers });
+        }
+      }
+      const consentText = data.formVersion === "loyalty-card" ? loyaltyConsent : originalConsent;
       await env.DB.prepare(
-        "INSERT INTO signups (email, name, consent_text) VALUES (?, ?, ?) ON CONFLICT(email) DO NOTHING"
-      ).bind(email, name, consentText).run();
+        "INSERT INTO signups (email, name, phone, consent_text) VALUES (?, ?, ?, ?) ON CONFLICT(email) DO NOTHING"
+      ).bind(email, name, phone, consentText).run();
       return Response.json({ saved: true }, { headers });
     } catch {
       return new Response(null, { status: 503, headers });

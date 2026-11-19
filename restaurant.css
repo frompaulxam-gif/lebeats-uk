@@ -222,45 +222,49 @@ nav.categories { display: flex; flex-wrap: wrap; }
 
 .menu-highlights {
   margin-top: clamp(24px, 3.5vw, 48px);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(24px, 4vw, 68px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(18px, 2.5vw, 38px);
 }
 .best-seller-photo {
   display: block;
-  position: relative;
-  overflow: hidden;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
   border-radius: 6px;
 }
-.best-seller-photo img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 47% center;
-}
-.menu-highlights .menu-grid { grid-template-columns: 1fr; gap: 0; }
-.menu-highlights .dish-card {
-  padding: clamp(18px, 2vw, 28px) 0;
-  border-bottom: 1px solid #16241a32;
-}
 .menu-highlights .dish-copy {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: 7px 16px;
-  padding: 0;
+  gap: 7px 12px;
+  padding-top: 14px;
 }
-.menu-highlights .dish-copy h3 { font-size: clamp(26px, 2.8vw, 40px); }
-.menu-highlights .dish-copy p { grid-column: 1 / -1; max-width: 46ch; margin: 0; font-size: 14px; }
-.menu-highlights .dish-price { margin: 0; }
+.menu-highlights .dish-copy h3 { font-size: clamp(26px, 2.5vw, 37px); }
+.menu-highlights .dish-copy p { flex-basis: 100%; max-width: 46ch; margin: 0; font-size: 14px; }
+.menu-highlights .dish-price { margin: 0 0 0 auto; }
 .menu-highlights .dish-card:hover h3,
 .menu-highlights .dish-card:focus-visible h3 { color: var(--red); }
-@media (max-width: 600px) {
-  .menu-highlights { grid-template-columns: 1fr; gap: 5px; }
-  .best-seller-photo { aspect-ratio: 2.35; }
-  .menu-highlights .dish-copy p { font-size: 13px; }
+.story-photo::after {
+  content: "";
+  position: absolute;
+  inset: 45% 0 0;
+  background: linear-gradient(transparent, rgb(0 0 0 / 55%));
+  pointer-events: none;
+}
+.story-photo > span { z-index: 1; }
+@media (max-width: 799px) {
+  .menu-highlights { grid-template-columns: 1fr; gap: 27px; }
+}
+@media (min-width: 520px) and (max-width: 799px) {
+  .menu-highlights .dish-card { display: grid; grid-template-columns: 39% 1fr; align-items: center; gap: 20px; }
+  .menu-highlights .dish-copy { padding-top: 0; }
+}
+#card-form label span { color: #cfc9c1; font-weight: 400; }
+@media (max-height: 740px) and (max-width: 540px) {
+  .card-art { min-height: 72px; }
+  .card-face { width: 86px; padding: 7px; font-size: 13px; border-radius: 6px; }
+  .card-copy { padding: 16px 20px 20px; }
+  .card-copy p { margin-block: 8px 12px; }
 }
 
 .google-reviews {

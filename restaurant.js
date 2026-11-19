@@ -4,6 +4,7 @@ const cardStatus = document.getElementById("card-status");
 const cardSubmit = cardForm.querySelector("button");
 const cardName = cardForm.elements.namedItem("name");
 const cardEmail = cardForm.elements.namedItem("email");
+const cardPhone = cardForm.elements.namedItem("phone");
 const cardDescription = document.getElementById("card-description");
 const seenKey = "lebeats.blackCardSignup.seen";
 let openTimer;
@@ -25,10 +26,17 @@ cardForm.addEventListener("submit", async event => {
     cardName.reportValidity();
     return;
   }
+  const phone = cardPhone.value.trim();
+  const digits = phone.replace(/[^0-9]/g, "");
+  if (phone && (!/^\+?[0-9 ().-]+$/.test(phone) || digits.length < 7 || digits.length > 15)) {
+    cardPhone.setCustomValidity("Enter a valid phone number or leave this field blank.");
+    cardPhone.reportValidity();
+    return;
+  }
   cardStatus.textContent = "";
   cardSubmit.disabled = true;
   cardSubmit.textContent = "Signing up…";
-  cardName.readOnly = cardEmail.readOnly = true;
+  cardName.readOnly = cardEmail.readOnly = cardPhone.readOnly = true;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 12000);
   try {
@@ -37,11 +45,16 @@ cardForm.addEventListener("submit", async event => {
       headers: { "Content-Type": "application/json" },
       credentials: "omit",
       signal: controller.signal,
-      body: JSON.stringify({ name: cardName.value.trim(), email: cardEmail.value.trim() })
+      body: JSON.stringify({
+        name: cardName.value.trim(),
+        email: cardEmail.value.trim(),
+        phone,
+        formVersion: "loyalty-card"
+      })
     });
     if (!response.ok) {
       const messages = {
-        422: "Check your name and email, then try again.",
+        422: "Check your details, then try again.",
         429: "Please wait a minute and try again."
       };
       cardStatus.textContent = messages[response.status] || "We couldn’t confirm your signup. Please try again.";
@@ -51,7 +64,7 @@ cardForm.addEventListener("submit", async event => {
     cardForm.reset();
     cardForm.hidden = true;
     cardDescription.hidden = true;
-    cardStatus.textContent = "You’re on the list for Black Card updates and discounts.";
+    cardStatus.textContent = "You’re on the list for Loyalty Card updates and discounts.";
     if (dialog.open) cardStatus.focus({ preventScroll: true });
   } catch {
     cardStatus.textContent = "We couldn’t confirm your signup. Check your connection and try again.";
@@ -59,10 +72,11 @@ cardForm.addEventListener("submit", async event => {
     clearTimeout(timeout);
     cardSubmit.disabled = false;
     cardSubmit.textContent = "Sign up";
-    cardName.readOnly = cardEmail.readOnly = false;
+    cardName.readOnly = cardEmail.readOnly = cardPhone.readOnly = false;
   }
 });
 cardName.addEventListener("input", () => cardName.setCustomValidity(""));
+cardPhone.addEventListener("input", () => cardPhone.setCustomValidity(""));
 for (const button of document.querySelectorAll(".open-card")) {
   button.addEventListener("click", openSignup);
 }
