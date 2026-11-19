@@ -353,6 +353,9 @@ nav.categories { display: flex; flex-wrap: wrap; }
   .hero { min-height: 0; }
   .hero-copy .button, .mobile-order button { min-height: 44px; }
   .hero-bottom { z-index: 3; bottom: 66px; }
+  .story-copy > svg { top: 12px; right: 25px; width: 24px; height: 24px; }
+  .story-copy h2 { font-size: clamp(49px, 16.5vw, 66px); }
+  .story-copy p { font-size: 14px; }
   .order-box { scroll-margin-top: 8px; }
   .order-box p { font-size: 14px; line-height: 1.5; }
   .footer-top > div { display: grid; grid-template-columns: 1fr 1fr; }
