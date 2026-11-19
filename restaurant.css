@@ -201,13 +201,13 @@ nav.categories { display: flex; flex-wrap: wrap; }
 }
 .hero-track > .hero-second h2 { display: none; }
 
-.best-seller-photo { display: none; }
-.menu-highlights[data-view="best-sellers"] {
+.menu-highlights {
+  margin-top: clamp(24px, 3.5vw, 48px);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: clamp(24px, 4vw, 68px);
 }
-[data-view="best-sellers"] .best-seller-photo {
+.best-seller-photo {
   display: block;
   position: relative;
   overflow: hidden;
@@ -221,27 +221,25 @@ nav.categories { display: flex; flex-wrap: wrap; }
   object-fit: cover;
   object-position: 47% center;
 }
-[data-view="best-sellers"] .menu-grid { grid-template-columns: 1fr; gap: 0; }
-[data-view="best-sellers"] .dish-image { display: none; }
-[data-view="best-sellers"] .dish-card {
+.menu-highlights .menu-grid { grid-template-columns: 1fr; gap: 0; }
+.menu-highlights .dish-card {
   padding: clamp(18px, 2vw, 28px) 0;
   border-bottom: 1px solid #16241a32;
 }
-[data-view="best-sellers"] .dish-copy {
+.menu-highlights .dish-copy {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
   gap: 7px 16px;
   padding: 0;
 }
-[data-view="best-sellers"] .dish-copy h3 { font-size: clamp(26px, 2.8vw, 40px); }
-[data-view="best-sellers"] .dish-copy p { grid-column: 1 / -1; max-width: 46ch; margin: 0; font-size: 14px; }
-[data-view="best-sellers"] .dish-price { margin: 0; }
-[data-view="best-sellers"] .dish-card:hover h3,
-[data-view="best-sellers"] .dish-card:focus-visible h3 { color: var(--red); }
+.menu-highlights .dish-copy h3 { font-size: clamp(26px, 2.8vw, 40px); }
+.menu-highlights .dish-copy p { grid-column: 1 / -1; max-width: 46ch; margin: 0; font-size: 14px; }
+.menu-highlights .dish-price { margin: 0; }
+.menu-highlights .dish-card:hover h3,
+.menu-highlights .dish-card:focus-visible h3 { color: var(--red); }
 @media (max-width: 600px) {
-  .menu-highlights[data-view="best-sellers"] { grid-template-columns: 1fr; gap: 5px; }
-  [data-view="best-sellers"] .best-seller-photo { aspect-ratio: 2.35; }
-  [data-view="best-sellers"] .dish-copy p { font-size: 13px; }
-  .menu-toolbar .categories { flex-wrap: wrap; overflow: visible; }
+  .menu-highlights { grid-template-columns: 1fr; gap: 5px; }
+  .best-seller-photo { aspect-ratio: 2.35; }
+  .menu-highlights .dish-copy p { font-size: 13px; }
 }
