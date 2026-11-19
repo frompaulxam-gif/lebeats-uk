@@ -78,3 +78,17 @@ navDialog.addEventListener("close", () => navTrigger.setAttribute("aria-expanded
 navDialog.addEventListener("click", event => {
   if (event.target.closest("a, button")) navDialog.close();
 });
+
+const reviews = document.querySelector(".google-reviews");
+const reviewTrack = reviews.querySelector(".reviews-track");
+const reviewButton = reviews.querySelector(".reviews-motion");
+const repeatReviews = reviewTrack.querySelector(".reviews-list").cloneNode(true);
+repeatReviews.setAttribute("aria-hidden", "true");
+repeatReviews.inert = true;
+reviewTrack.append(repeatReviews);
+reviews.classList.add("is-moving");
+reviewButton.hidden = false;
+reviewButton.addEventListener("click", () => {
+  const paused = reviews.toggleAttribute("data-paused");
+  reviewButton.setAttribute("aria-label", paused ? "Resume scrolling reviews" : "Pause scrolling reviews");
+});
