@@ -84,7 +84,8 @@ cardForm.addEventListener("submit", async event => {
         name: cardName.value.trim(),
         email: cardEmail.value.trim(),
         phone,
-        formVersion: "loyalty-card"
+        formVersion: "loyalty-card",
+        source: window.lebSignupSource?.() || null
       })
     });
     if (!response.ok) {

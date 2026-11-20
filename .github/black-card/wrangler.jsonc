@@ -15,5 +15,9 @@
     "name": "SIGNUP_LIMIT",
     "namespace_id": "1804627142",
     "simple": { "limit": 20, "period": 60 }
+  }, {
+    "name": "ACTIVITY_LIMIT",
+    "namespace_id": "1804627143",
+    "simple": { "limit": 120, "period": 60 }
   }]
 }

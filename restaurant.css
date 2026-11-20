@@ -441,3 +441,5 @@ nav.categories { display: flex; flex-wrap: wrap; }
 @media (min-width: 520px) and (max-width: 960px) and (max-height: 500px) and (orientation: landscape) and (prefers-reduced-motion: no-preference) {
   .hero { top: 56px; }
 }
+
+.measurement-choice {margin-top:16px;font:normal 13px/1.5 system-ui,sans-serif}.measurement-choice summary,.measurement-choice input {cursor:pointer}.measurement-choice label {display:flex;align-items:center;gap:8px;font:inherit}.measurement-choice input[type=checkbox] {width:16px;height:16px;min-height:0;padding:0}.measurement-choice p {margin:8px 0}

@@ -35,7 +35,9 @@
     .description { grid-column: 1/-1; }
     footer { margin-top: 32px; }
     :focus-visible { outline: 2px solid #175532; outline-offset: 3px; }
+  .measurement-choice {margin-top:16px;font:normal 13px/1.5 system-ui,sans-serif}.measurement-choice summary,.measurement-choice input {cursor:pointer}.measurement-choice label {display:flex;align-items:center;gap:8px;font:inherit}.measurement-choice input[type=checkbox] {width:16px;height:16px;min-height:0;padding:0}.measurement-choice p {margin:8px 0}
   </style>
+  <script defer src="/website-activity.js"></script>
 </head>
 <body>
   <main>
@@ -217,7 +219,7 @@
         </div>
       </dl>
     </section>
-    <footer><a href="/#find-us">Find LEB EATS and check opening hours</a></footer>
+    <footer><a href="/#find-us">Find LEB EATS and check opening hours</a><details class="measurement-choice"><summary>Website measurement</summary><p>We count page views and taps by traffic source. You can turn this off in this browser.</p><label><input type="checkbox" data-measurement-optout> Turn off website measurement</label></details></footer>
   </main>
 </body>
 </html>
