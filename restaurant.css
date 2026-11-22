@@ -258,10 +258,24 @@ nav.categories { display: flex; flex-wrap: wrap; }
 }
 .location-graphic:focus-visible { outline: 3px solid var(--lime); outline-offset: -6px; }
 
-.student-offer {
+.midweek-offer {
   margin-top: 12px;
   color: var(--paper);
   font: 400 clamp(14px, 1.25vw, 18px)/1.35 "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.midweek-offer strong {
+  display: inline-block;
+  font: 700 clamp(19px, 2.1vw, 30px)/1.25 Manrope, sans-serif;
+  margin-bottom: .15em;
+}
+.menu-board-group .midweek-menu {
+  margin: 12px 0 8px;
+  padding: 10px 14px;
+  border-left: 4px solid var(--green);
+  background: #e6ebd6;
+  color: #153f28;
+  font-size: 14px;
+  line-height: 1.45;
 }
 @media (max-width: 600px) {
   .hero-second { top: 11%; }
