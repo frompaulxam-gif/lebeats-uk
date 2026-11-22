@@ -1,6 +1,11 @@
 import { randomBytes, scryptSync, createHash, timingSafeEqual } from "node:crypto";
 
-const cookieName = "__Host-leb_session";
+const siteOrigin = "https://lebeats.uk";
+const legacyCookie = "__Host-leb_session";
+const siteCookie = "__Host-leb_site_session";
+const probeCookie = "__Host-leb_cookie_check";
+const partitioned = "; Path=/; Secure; HttpOnly; SameSite=None; Partitioned";
+const firstParty = "; Path=/; Secure; HttpOnly; SameSite=Lax";
 const sessionSeconds = 30 * 24 * 60 * 60;
 const dummySalt = "e39a10401c4421f830397cb2b0c9eff9";
 const dummyPassword = "s1:" + dummySalt + ":" + "0".repeat(64);
@@ -23,15 +28,23 @@ function newRecoveryKey() {
 }
 
 function sessionDigest(request) {
+  const cookieName = request.headers.get("Origin") === siteOrigin ? siteCookie : legacyCookie;
   const token = (request.headers.get("Cookie") || "").split(/;\s*/).find(c => c.startsWith(cookieName + "="))?.slice(cookieName.length + 1);
   return token && /^[0-9a-f]{64}$/.test(token) ? digest(token) : null;
 }
 
-function reply(status, body, token) {
+function reply(status, body) {
   const headers = { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer" };
-  if (token !== undefined) headers["Set-Cookie"] = cookieName + "=" + token + "; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=" + (token ? sessionSeconds : 0);
   if (status === 429) headers["Retry-After"] = "60";
   return Response.json(body, { status, headers });
+}
+
+function sessionReply(request, status, body, token) {
+  const response = reply(status, body);
+  const branded = request.headers.get("Origin") === siteOrigin;
+  response.headers.set("Set-Cookie", (branded ? siteCookie : legacyCookie) + "=" + token
+    + (branded ? partitioned : firstParty) + "; Max-Age=" + (token ? sessionSeconds : 0));
+  return response;
 }
 
 function sessionInsert(db, token, accountId, version) {
@@ -51,7 +64,7 @@ const validPassword = password => typeof password === "string" && Array.from(pas
 const invalidLogin = () => reply(401, { error: "Check your email and password and try again." });
 const invalidKey = () => reply(401, { error: "Check your email and recovery key and try again." });
 
-async function register(db, data, email) {
+async function register(db, data, email, request) {
   const name = typeof data.name === "string" ? data.name.trim() : "";
   if (!name || name.length > 100 || /[\u0000-\u001f\u007f]/u.test(name)) return reply(422, { error: "Enter your name." });
   if (!validPassword(data.password)) return reply(422, { error: "Use a password of at least 15 characters." });
@@ -64,20 +77,20 @@ async function register(db, data, email) {
     sessionInsert(db, token, id, 1)
   ]);
   if (!created.meta.changes) return reply(409, { error: "An account already uses this email. Sign in or reset your password." });
-  return reply(201, { member: { id, name, email }, recoveryKey }, token);
+  return sessionReply(request, 201, { member: { id, name, email }, recoveryKey }, token);
 }
 
-async function login(db, password, email) {
+async function login(db, password, email, request) {
   if (typeof password !== "string" || !password || password.length > 128) return invalidLogin();
   const account = await db.prepare("SELECT id,name,email,password_digest,session_version FROM loyalty_accounts WHERE email=?").bind(email).first();
   if (!passwordMatches(password, account?.password_digest || dummyPassword) || !account) return invalidLogin();
   const token = random(32);
   const result = await sessionInsert(db, token, account.id, account.session_version).run();
   if (!result.meta.changes) return invalidLogin();
-  return reply(200, { member: { id: account.id, email: account.email, name: account.name } }, token);
+  return sessionReply(request, 200, { member: { id: account.id, email: account.email, name: account.name } }, token);
 }
 
-async function reset(db, data, email) {
+async function reset(db, data, email, request) {
   if (!validPassword(data.password)) return reply(422, { error: "Use a new password of at least 15 characters." });
   const key = typeof data.key === "string" ? data.key.trim().toLowerCase() : "";
   if (!/^(?:[0-9a-f]{4}-){7}[0-9a-f]{4}$/.test(key)) return invalidKey();
@@ -94,7 +107,7 @@ async function reset(db, data, email) {
       SELECT ?,id,session_version,unixepoch()+? FROM loyalty_accounts WHERE id=? AND recovery_digest=?`).bind(digest(token), sessionSeconds, account.id, digest(recoveryKey))
   ]);
   if (!changed.meta.changes) return invalidKey();
-  return reply(200, { member: { id: account.id, name: account.name, email: account.email }, recoveryKey }, token);
+  return sessionReply(request, 200, { member: { id: account.id, name: account.name, email: account.email }, recoveryKey }, token);
 }
 
 async function replaceKey(db, request, password) {
@@ -113,7 +126,10 @@ const paths = new Set(["register", "login", "reset", "logout", "session", "repla
 export async function accountRequest(request, env, ctx, readPayload) {
   const url = new URL(request.url);
   if (!url.pathname.startsWith("/account/api/")) {
-    const asset = await env.ACCOUNT_ASSETS.fetch(request);
+    if (url.pathname === "/account") return Response.redirect(new URL("/account/", url), 308);
+    const assetUrl = new URL(url);
+    assetUrl.pathname = url.pathname.slice("/account".length);
+    const asset = await env.ACCOUNT_ASSETS.fetch(new Request(assetUrl, request));
     const response = new Response(asset.body, asset);
     response.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' https://lebeats.uk; font-src 'self' https://lebeats.uk; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'");
     response.headers.set("Cache-Control", "no-store");
@@ -122,20 +138,44 @@ export async function accountRequest(request, env, ctx, readPayload) {
     response.headers.set("X-Robots-Tag", "noindex");
     return response;
   }
+  const origin = request.headers.get("Origin");
+  if (origin && origin !== url.origin && origin !== siteOrigin) return reply(403, {});
+  const branded = origin === siteOrigin;
+  const response = branded && request.method === "OPTIONS"
+    ? new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } })
+    : await accountApi(request, env, ctx, readPayload, url, branded);
+  response.headers.set("Vary", "Origin");
+  if (branded) {
+    response.headers.set("Access-Control-Allow-Origin", siteOrigin);
+    response.headers.set("Access-Control-Allow-Credentials", "true");
+    response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+  }
+  return response;
+}
+
+async function accountApi(request, env, ctx, readPayload, url, branded) {
   const action = url.pathname.slice("/account/api/".length);
+  if (branded && request.method === "GET" && action === "cookie-check") {
+    const supported = (request.headers.get("Cookie") || "").split(/;\s*/).includes(probeCookie + "=1");
+    return reply(200, { supported });
+  }
   if (!paths.has(action)) return reply(404, {});
   if (request.method !== (action === "session" ? "GET" : "POST")) return reply(405, {});
   try {
     if (action === "session") {
       const member = await sessionAccount(env.DB, request);
-      return member ? reply(200, { member }) : reply(401, { error: "Please sign in." });
+      if (member) return reply(200, { member });
+      const result = reply(401, { error: "Please sign in." });
+      if (branded) result.headers.set("Set-Cookie", probeCookie + "=1" + partitioned + "; Max-Age=120");
+      return result;
     }
-    if (request.headers.get("Origin") !== url.origin) return reply(403, {});
+    if (!branded && request.headers.get("Origin") !== url.origin) return reply(403, {});
     if (request.headers.get("Content-Type")?.split(";")[0].trim() !== "application/json") return reply(415, {});
     if (action === "logout") {
       const key = sessionDigest(request);
       if (key) await env.DB.prepare("DELETE FROM loyalty_sessions WHERE token_digest=?").bind(key).run();
-      return reply(200, {}, "");
+      return sessionReply(request, 200, {}, "");
     }
     const ip = request.headers.get("CF-Connecting-IP") || "unknown";
     if (!(await env.ACCOUNT_LIMIT.limit({ key: "ip:" + ip })).success) return reply(429, { error: "Please wait a minute and try again." });
@@ -146,9 +186,9 @@ export async function accountRequest(request, env, ctx, readPayload) {
     if (email.length > 254 || !/^[^\s@\u0000-\u001f\u007f]+@[^\s@\u0000-\u001f\u007f]+\.[^\s@\u0000-\u001f\u007f]+$/u.test(email)) return reply(422, { error: "Enter a valid email address." });
     if (!(await env.ACCOUNT_LIMIT.limit({ key: "email:" + digest(email) })).success) return reply(429, { error: "Please wait a minute and try again." });
     if (randomBytes(1)[0] < 8) ctx.waitUntil(env.DB.prepare("DELETE FROM loyalty_sessions WHERE expires_at<=unixepoch()").run());
-    if (action === "register") return await register(env.DB, data, email);
-    if (action === "login") return await login(env.DB, data.password, email);
-    return await reset(env.DB, data, email);
+    if (action === "register") return await register(env.DB, data, email, request);
+    if (action === "login") return await login(env.DB, data.password, email, request);
+    return await reset(env.DB, data, email, request);
   } catch {
     return reply(503, { error: "We couldn’t reach your account. Please try again shortly." });
   }

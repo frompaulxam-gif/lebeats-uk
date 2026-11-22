@@ -1,19 +1,21 @@
 const byId = id => document.getElementById(id);
 const views = ["register", "login", "reset", "member"];
 const publicViews = views.slice(0, 3);
+const brandedPage = location.origin === "https://lebeats.uk";
+const serviceOrigin = brandedPage ? "https://leb-eats-black-card.raspy-waterfall-454f.workers.dev" : location.origin;
 let member = null;
 let ready = false;
 let busy = false;
 let loadingId = 0;
 
 async function api(action, data) {
-  const options = { credentials: "same-origin", cache: "no-store" };
+  const options = { credentials: "include", cache: "no-store" };
   if (data !== undefined) {
     options.method = "POST";
     options.headers = { "Content-Type": "application/json" };
     options.body = JSON.stringify(data);
   }
-  const response = await fetch("/account/api/" + action, options);
+  const response = await fetch(serviceOrigin + "/account/api/" + action, options);
   const result = await response.json().catch(() => ({}));
   if (!response.ok) {
     const error = new Error(result.error || "We couldn’t complete that request. Please try again.");
@@ -59,9 +61,25 @@ async function load() {
     member = (await api("session")).member;
   } catch (error) {
     member = null;
+    if (brandedPage && error.status === 401) {
+      try {
+        const check = await api("cookie-check");
+        if (current !== loadingId) return;
+        if (!check.supported) {
+          ready = false;
+          for (const id of views) byId(id).hidden = true;
+          byId("loading").hidden = true;
+          byId("cookie-help").hidden = false;
+          const view = location.hash.slice(1);
+          byId("secure-login").hash = publicViews.includes(view) ? view : "register";
+          return;
+        }
+      } catch { problem = "We couldn’t check your session. Refresh to try again."; }
+    }
     if (error.status !== 401) problem = "We couldn’t check your session. Refresh to try again.";
   }
   if (current !== loadingId) return;
+  byId("cookie-help").hidden = true;
   ready = true;
   show();
   if (problem) announce(problem);
