@@ -7,6 +7,10 @@ const probeCookie = "__Host-leb_cookie_check";
 const partitioned = "; Path=/; Secure; HttpOnly; SameSite=None; Partitioned";
 const firstParty = "; Path=/; Secure; HttpOnly; SameSite=Lax";
 const sessionSeconds = 30 * 24 * 60 * 60;
+// Cookie-restricted browsers can sign in for one tab without a persistent bearer token.
+const tabSessionSeconds = 15 * 60;
+const isTabSession = request => request.headers.get("Origin") === siteOrigin && request.headers.get("X-LEB-Session") === "tab";
+const lifetime = request => isTabSession(request) ? tabSessionSeconds : sessionSeconds;
 const dummySalt = "e39a10401c4421f830397cb2b0c9eff9";
 const dummyPassword = "s1:" + dummySalt + ":" + "0".repeat(64);
 
@@ -28,6 +32,10 @@ function newRecoveryKey() {
 }
 
 function sessionDigest(request) {
+  if (isTabSession(request)) {
+    const match = /^Bearer ([a-f0-9]{64})$/.exec(request.headers.get("Authorization") || "");
+    return match ? digest(match[1]) : null;
+  }
   const cookieName = request.headers.get("Origin") === siteOrigin ? siteCookie : legacyCookie;
   const token = (request.headers.get("Cookie") || "").split(/;\s*/).find(c => c.startsWith(cookieName + "="))?.slice(cookieName.length + 1);
   return token && /^[0-9a-f]{64}$/.test(token) ? digest(token) : null;
@@ -40,6 +48,7 @@ function reply(status, body) {
 }
 
 function sessionReply(request, status, body, token) {
+  if (isTabSession(request)) return reply(status, token ? { ...body, tabSession: token } : body);
   const response = reply(status, body);
   const branded = request.headers.get("Origin") === siteOrigin;
   response.headers.set("Set-Cookie", (branded ? siteCookie : legacyCookie) + "=" + token
@@ -47,10 +56,10 @@ function sessionReply(request, status, body, token) {
   return response;
 }
 
-function sessionInsert(db, token, accountId, version) {
+function sessionInsert(db, token, accountId, version, request) {
   return db.prepare(`INSERT INTO loyalty_sessions (token_digest,account_id,version,expires_at)
     SELECT ?,id,session_version,unixepoch()+? FROM loyalty_accounts WHERE id=? AND session_version=?`)
-    .bind(digest(token), sessionSeconds, accountId, version);
+    .bind(digest(token), lifetime(request), accountId, version);
 }
 
 async function sessionAccount(db, request) {
@@ -74,7 +83,7 @@ async function register(db, data, email, request) {
   const [created] = await db.batch([
     db.prepare(`INSERT INTO loyalty_accounts (id,email,name,password_digest,recovery_digest)
       VALUES (?,?,?,?,?) ON CONFLICT(email) DO NOTHING`).bind(id, email, name, passwordDigest(data.password), digest(recoveryKey)),
-    sessionInsert(db, token, id, 1)
+    sessionInsert(db, token, id, 1, request)
   ]);
   if (!created.meta.changes) return reply(409, { error: "An account already uses this email. Sign in or reset your password." });
   return sessionReply(request, 201, { member: { id, name, email }, recoveryKey }, token);
@@ -85,7 +94,7 @@ async function login(db, password, email, request) {
   const account = await db.prepare("SELECT id,name,email,password_digest,session_version FROM loyalty_accounts WHERE email=?").bind(email).first();
   if (!passwordMatches(password, account?.password_digest || dummyPassword) || !account) return invalidLogin();
   const token = random(32);
-  const result = await sessionInsert(db, token, account.id, account.session_version).run();
+  const result = await sessionInsert(db, token, account.id, account.session_version, request).run();
   if (!result.meta.changes) return invalidLogin();
   return sessionReply(request, 200, { member: { id: account.id, email: account.email, name: account.name } }, token);
 }
@@ -104,7 +113,7 @@ async function reset(db, data, email, request) {
     db.prepare(`UPDATE loyalty_accounts SET password_digest=?,recovery_digest=?,session_version=?
       WHERE id=? AND recovery_digest=? AND session_version=?`).bind(passwordDigest(data.password), digest(recoveryKey), nextVersion, account.id, digest(key), account.session_version),
     db.prepare(`INSERT INTO loyalty_sessions (token_digest,account_id,version,expires_at)
-      SELECT ?,id,session_version,unixepoch()+? FROM loyalty_accounts WHERE id=? AND recovery_digest=?`).bind(digest(token), sessionSeconds, account.id, digest(recoveryKey))
+      SELECT ?,id,session_version,unixepoch()+? FROM loyalty_accounts WHERE id=? AND recovery_digest=?`).bind(digest(token), lifetime(request), account.id, digest(recoveryKey))
   ]);
   if (!changed.meta.changes) return invalidKey();
   return sessionReply(request, 200, { member: { id: account.id, name: account.name, email: account.email }, recoveryKey }, token);
@@ -149,7 +158,7 @@ export async function accountRequest(request, env, ctx, readPayload) {
     response.headers.set("Access-Control-Allow-Origin", siteOrigin);
     response.headers.set("Access-Control-Allow-Credentials", "true");
     response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+    response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-LEB-Session");
   }
   return response;
 }
@@ -167,7 +176,7 @@ async function accountApi(request, env, ctx, readPayload, url, branded) {
       const member = await sessionAccount(env.DB, request);
       if (member) return reply(200, { member });
       const result = reply(401, { error: "Please sign in." });
-      if (branded) result.headers.set("Set-Cookie", probeCookie + "=1" + partitioned + "; Max-Age=120");
+      if (branded && !isTabSession(request)) result.headers.set("Set-Cookie", probeCookie + "=1" + partitioned + "; Max-Age=120");
       return result;
     }
     if (!branded && request.headers.get("Origin") !== url.origin) return reply(403, {});

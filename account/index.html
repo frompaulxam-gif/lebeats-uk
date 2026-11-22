@@ -8,7 +8,7 @@
   <title>Your account · LEB EATS</title>
   <link rel="icon" href="https://lebeats.uk/assets/logo.png">
   <link rel="stylesheet" href="/account/account.css">
-  <script src="/account/account.js" defer></script>
+  <script src="/account/account.js?v=branded-2" defer></script>
 </head>
 <body>
   <header><div class="wrap"><a class="brand" href="https://lebeats.uk/" aria-label="LEB EATS home">LEB EATS</a><a class="back" href="https://lebeats.uk/">Back to the restaurant <span aria-hidden="true">↗</span></a></div></header>
@@ -21,11 +21,6 @@
     <section class="panel" aria-label="Customer account">
       <noscript>Turn on JavaScript to use your LEB EATS account.</noscript>
       <p id="loading" role="status">Opening your account…</p>
-      <div id="cookie-help" hidden>
-        <h1>Your loyalty account.</h1>
-        <p class="intro">Your browser’s privacy settings require a separate sign-in page.</p>
-        <p class="switch"><a id="secure-login" href="https://leb-eats-black-card.raspy-waterfall-454f.workers.dev/account/">Continue to your account</a></p>
-      </div>
       <div id="register" hidden>
         <h1 tabindex="-1">Create an account.</h1>
         <p class="intro">Set up your LEB EATS account. Loyalty rewards are coming soon.</p>
@@ -64,6 +59,7 @@
       <div id="member" hidden>
         <h1 tabindex="-1">Your account.</h1>
         <p class="intro" id="member-intro"></p>
+        <p id="tab-info" hidden>Your browser limits cookies, so this sign-in lasts 15 minutes in this tab.</p>
         <div id="key-box" class="key-box" hidden>
           <h2>Save your recovery key</h2>
           <p>Keep this key in your password manager or somewhere private. You’ll need it if you forget your password. We show it once.</p>

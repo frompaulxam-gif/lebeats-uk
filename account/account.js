@@ -2,6 +2,19 @@ const byId = id => document.getElementById(id);
 const views = ["register", "login", "reset", "member"];
 const publicViews = views.slice(0, 3);
 const brandedPage = location.origin === "https://lebeats.uk";
+const tabKey = "leb.account.tab";
+let tabSession = "";
+if (brandedPage) {
+  try { tabSession = sessionStorage.getItem(tabKey) || ""; } catch {}
+}
+let useTabSession = Boolean(tabSession);
+function saveTabSession(value) {
+  tabSession = value;
+  try {
+    if (value) sessionStorage.setItem(tabKey, value);
+    else sessionStorage.removeItem(tabKey);
+  } catch { /* Private browsers that disable storage can still use the open page. */ }
+}
 const serviceOrigin = brandedPage ? "https://leb-eats-black-card.raspy-waterfall-454f.workers.dev" : location.origin;
 let member = null;
 let ready = false;
@@ -9,10 +22,14 @@ let busy = false;
 let loadingId = 0;
 
 async function api(action, data) {
-  const options = { credentials: "include", cache: "no-store" };
+  const options = { credentials: useTabSession ? "omit" : "include", cache: "no-store", headers: {} };
+  if (useTabSession) {
+    options.headers["X-LEB-Session"] = "tab";
+    if (tabSession) options.headers.Authorization = "Bearer " + tabSession;
+  }
   if (data !== undefined) {
     options.method = "POST";
-    options.headers = { "Content-Type": "application/json" };
+    options.headers["Content-Type"] = "application/json";
     options.body = JSON.stringify(data);
   }
   const response = await fetch(serviceOrigin + "/account/api/" + action, options);
@@ -22,6 +39,7 @@ async function api(action, data) {
     error.status = response.status;
     throw error;
   }
+  if (useTabSession && result.tabSession) saveTabSession(result.tabSession);
   return result;
 }
 
@@ -61,25 +79,19 @@ async function load() {
     member = (await api("session")).member;
   } catch (error) {
     member = null;
-    if (brandedPage && error.status === 401) {
+    if (useTabSession && error.status === 401) saveTabSession("");
+    if (brandedPage && !useTabSession && error.status === 401) {
       try {
         const check = await api("cookie-check");
         if (current !== loadingId) return;
-        if (!check.supported) {
-          ready = false;
-          for (const id of views) byId(id).hidden = true;
-          byId("loading").hidden = true;
-          byId("cookie-help").hidden = false;
-          const view = location.hash.slice(1);
-          byId("secure-login").hash = publicViews.includes(view) ? view : "register";
-          return;
-        }
+        useTabSession = !check.supported;
       } catch { problem = "We couldn’t check your session. Refresh to try again."; }
     }
     if (error.status !== 401) problem = "We couldn’t check your session. Refresh to try again.";
   }
   if (current !== loadingId) return;
-  byId("cookie-help").hidden = true;
+  const tabInfo = byId("tab-info");
+  if (tabInfo) tabInfo.hidden = !useTabSession;
   ready = true;
   show();
   if (problem) announce(problem);
@@ -130,6 +142,7 @@ byId("logout").addEventListener("click", async () => {
   setBusy(true);
   try {
     await api("logout", {});
+    if (useTabSession) saveTabSession("");
     member = null;
     clearKey();
     for (const form of document.forms) form.reset();
