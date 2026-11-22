@@ -135,6 +135,14 @@ const paths = new Set(["register", "login", "reset", "logout", "session", "repla
 export async function accountRequest(request, env, ctx, readPayload) {
   const url = new URL(request.url);
   if (!url.pathname.startsWith("/account/api/")) {
+    if (url.hostname === "leb-eats-black-card.raspy-waterfall-454f.workers.dev"
+        && ["/account", "/account/", "/account/index.html"].includes(url.pathname)
+        && (request.method === "GET" || request.method === "HEAD")) {
+      return new Response(null, {
+        status: 302,
+        headers: { Location: siteOrigin + "/account/", "Cache-Control": "no-store" }
+      });
+    }
     if (url.pathname === "/account") return Response.redirect(new URL("/account/", url), 308);
     const assetUrl = new URL(url);
     assetUrl.pathname = url.pathname.slice("/account".length);
