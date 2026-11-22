@@ -5,19 +5,48 @@
   "compatibility_date": "2026-04-01",
   "workers_dev": true,
   "preview_urls": false,
-  "observability": { "enabled": false },
-  "d1_databases": [{
-    "binding": "DB",
-    "database_name": "leb-eats-black-card",
-    "database_id": "7d5eb529-7863-4e53-938a-32f73cce5b10"
-  }],
-  "ratelimits": [{
-    "name": "SIGNUP_LIMIT",
-    "namespace_id": "1804627142",
-    "simple": { "limit": 20, "period": 60 }
-  }, {
-    "name": "ACTIVITY_LIMIT",
-    "namespace_id": "1804627143",
-    "simple": { "limit": 120, "period": 60 }
-  }]
+  "observability": {
+    "enabled": false
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "leb-eats-black-card",
+      "database_id": "7d5eb529-7863-4e53-938a-32f73cce5b10"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "SIGNUP_LIMIT",
+      "namespace_id": "1804627142",
+      "simple": {
+        "limit": 20,
+        "period": 60
+      }
+    },
+    {
+      "name": "ACTIVITY_LIMIT",
+      "namespace_id": "1804627143",
+      "simple": {
+        "limit": 120,
+        "period": 60
+      }
+    },
+    {
+      "name": "ACCOUNT_LIMIT",
+      "namespace_id": "1804627144",
+      "simple": {
+        "limit": 15,
+        "period": 60
+      }
+    }
+  ],
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "directory": "./public",
+    "binding": "ACCOUNT_ASSETS",
+    "run_worker_first": true
+  }
 }

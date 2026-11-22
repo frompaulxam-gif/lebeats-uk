@@ -1,3 +1,5 @@
+import { accountRequest } from "./accounts.mjs";
+
 const origins = new Set(["https://lebeats.uk", "https://www.lebeats.uk"]);
 const originalConsent = "Sign up for Black Card updates and LEB EATS discounts by email.";
 const loyaltyConsent = "Sign up for Loyalty Card updates and LEB EATS discounts by email.";
@@ -27,8 +29,9 @@ async function readPayload(request) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const path = new URL(request.url).pathname;
+    if (path === "/account" || path.startsWith("/account/")) return accountRequest(request, env, ctx, readPayload);
     if (path !== "/signup" && path !== "/events") return new Response(null, { status: 404 });
     const origin = request.headers.get("Origin");
     if (!origins.has(origin)) return new Response(null, { status: 403 });

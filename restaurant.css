@@ -475,3 +475,8 @@ nav.categories { display: flex; flex-wrap: wrap; }
 }
 
 .measurement-choice {margin-top:16px;font:normal 13px/1.5 system-ui,sans-serif}.measurement-choice summary,.measurement-choice input {cursor:pointer}.measurement-choice label {display:flex;align-items:center;gap:8px;font:inherit}.measurement-choice input[type=checkbox] {width:16px;height:16px;min-height:0;padding:0}.measurement-choice p {margin:8px 0}
+
+.loyalty-actions { display:flex; flex-wrap:wrap; align-items:center; gap:1.5rem; }
+.loyalty-login, .loyalty-updates, .card-account-link { display:inline-flex; align-items:center; min-height:44px; color:inherit; font:inherit; font-weight:700; text-decoration:underline; text-underline-offset:.2em; }
+.loyalty-updates { margin-top:.5rem; padding:0; border:0; background:transparent; cursor:pointer; }
+.card-account-link { margin-top:.35rem; font-size:.92rem; }
