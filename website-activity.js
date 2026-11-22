@@ -17,6 +17,12 @@
     });
   }
 
+  window.addEventListener("storage", event => {
+    if (event.key !== preferenceKey && event.key !== null) return;
+    disabled = privacySignal || event.newValue === "1";
+    if (checkbox) checkbox.checked = disabled;
+  });
+
   const knownSources = new Set(["instagram", "facebook", "tiktok", "google", "google_business",
     "google_ads", "meta_ads", "poster", "email", "direct", "other", "internal_test"]);
   const url = new URL(location.href);
@@ -35,10 +41,10 @@
   }
   const source = trafficSource();
   window.lebSignupSource = () => disabled ? null : source;
-  function record(action) {
+  function record(action, placement) {
     if (disabled) return;
     fetch(endpoint, { method: "POST", credentials: "omit", keepalive: true,
-      referrerPolicy: "no-referrer", body: JSON.stringify({action, source})
+      referrerPolicy: "no-referrer", body: JSON.stringify({action, source, placement})
     }).catch(() => {});
   }
   // Carry only a recognised channel between the two public pages. No visitor identifier.
@@ -51,10 +57,6 @@
       link.href = dest.href;
     }
   }
-  const metricByHost = new Map([
-    ["deliveroo.co.uk", "deliveroo"], ["www.ubereats.com", "uber_eats"],
-    ["www.instagram.com", "instagram_tap"], ["www.tiktok.com", "tiktok_tap"]
-  ]);
   const menuPage = url.pathname === "/menu.html";
   function countPage() {
     if (document.visibilityState !== "visible") return;
@@ -63,17 +65,30 @@
   }
   document.addEventListener("visibilitychange", countPage);
   countPage();
+  // Cached pages published before button tagging can still contribute to the original totals.
+  const legacyPage = !document.querySelector("[data-measure-click]");
+  function legacyAction(href) {
+    const dest = new URL(href);
+    if (dest.protocol === "tel:") return "call";
+    if (dest.protocol === "mailto:") return "email_tap";
+    if (dest.origin === url.origin && (dest.hash === "#menu-list" ||
+        dest.pathname === "/assets/leb-eats-printed-menu.jpg")) return "menu_open";
+    if (dest.hostname === "www.google.com" && dest.pathname.startsWith("/maps")) return "directions";
+    return { "deliveroo.co.uk": "deliveroo", "www.ubereats.com": "uber_eats",
+      "www.instagram.com": "instagram_tap", "www.tiktok.com": "tiktok_tap" }[dest.hostname];
+  }
   function trackLink(event) {
     if (!event.isTrusted || (event.type === "auxclick" && event.button !== 1)) return;
-    const link = event.target.closest?.("a[href]");
-    if (!link) return;
-    const dest = new URL(link.href, location.href);
-    if (dest.protocol === "tel:") record("call");
-    else if (dest.protocol === "mailto:") record("email_tap");
-    else if (dest.origin === url.origin && (dest.hash === "#menu-list" ||
-             dest.pathname === "/assets/leb-eats-printed-menu.jpg")) record("menu_open");
-    else if (dest.hostname === "www.google.com" && dest.pathname.startsWith("/maps")) record("directions");
-    else if (metricByHost.has(dest.hostname)) record(metricByHost.get(dest.hostname));
+    if (legacyPage) {
+      const href = event.target.closest?.("a[href]")?.href;
+      const action = href && legacyAction(href);
+      if (action) record(action);
+      return;
+    }
+    const control = event.target.closest?.("[data-measure-click]");
+    if (!control || (event.type === "auxclick" && !control.matches("a[href]"))) return;
+    const [placement, action] = control.dataset.measureClick.split(".");
+    record(action, placement);
   }
   document.addEventListener("click", trackLink, true);
   document.addEventListener("auxclick", trackLink, true);

@@ -38,14 +38,14 @@
     :focus-visible { outline: 2px solid #175532; outline-offset: 3px; }
   .measurement-choice {margin-top:16px;font:normal 13px/1.5 system-ui,sans-serif}.measurement-choice summary,.measurement-choice input {cursor:pointer}.measurement-choice label {display:flex;align-items:center;gap:8px;font:inherit}.measurement-choice input[type=checkbox] {width:16px;height:16px;min-height:0;padding:0}.measurement-choice p {margin:8px 0}
   </style>
-  <script defer src="/website-activity.js"></script>
+  <script defer src="/website-activity.js?v=click-placements"></script>
 </head>
 <body>
   <main>
-    <header><a href="./">LEB EATS home</a><a href="../assets/leb-eats-printed-menu.jpg">View printed menu</a></header>
+    <header><a data-measure-click="menu_header.home" href="./">LEB EATS home</a><a data-measure-click="menu_header.menu_open" href="../assets/leb-eats-printed-menu.jpg">View printed menu</a></header>
     <h1>LEB EATS Leicester menu</h1>
-    <p class="intro">In-store prices for Leb Boxes, charcoal grills and sides at 197 Uppingham Road, Leicester, LE5 4BQ. Call <a href="tel:+441163602334">0116 360 2334</a> for collection.</p>
-    <nav aria-label="Menu categories"><a href="#boxes">Boxes</a><a href="#charcoal-grill">Charcoal grill</a><a href="#hot-starters">Hot starters</a><a href="#cold-starters">Cold starters</a><a href="#sides">Sides</a><a href="#drinks-sauces">Drinks &amp; sauces</a></nav>
+    <p class="intro">In-store prices for Leb Boxes, charcoal grills and sides at 197 Uppingham Road, Leicester, LE5 4BQ. Call <a data-measure-click="menu_intro.call" href="tel:+441163602334">0116 360 2334</a> for collection.</p>
+    <nav aria-label="Menu categories"><a data-measure-click="menu_categories.category_boxes" href="#boxes">Boxes</a><a data-measure-click="menu_categories.category_charcoal_grill" href="#charcoal-grill">Charcoal grill</a><a data-measure-click="menu_categories.category_hot_starters" href="#hot-starters">Hot starters</a><a data-measure-click="menu_categories.category_cold_starters" href="#cold-starters">Cold starters</a><a data-measure-click="menu_categories.category_sides" href="#sides">Sides</a><a data-measure-click="menu_categories.category_drinks_sauces" href="#drinks-sauces">Drinks &amp; sauces</a></nav>
     <section id="boxes">
       <h2>Boxes</h2>
       <p class="midweek-menu"><strong>Midweek Special · £8.99 per LEB Box</strong><br>Every Tuesday to Thursday, 12pm–5pm.</p>
@@ -221,7 +221,7 @@
         </div>
       </dl>
     </section>
-    <footer><a href="/#find-us">Find LEB EATS and check opening hours</a><details class="measurement-choice"><summary>Website measurement</summary><p>We count page views and taps by traffic source. You can turn this off in this browser.</p><label><input type="checkbox" data-measurement-optout> Turn off website measurement</label></details></footer>
+    <footer><a data-measure-click="menu_footer.to_location" href="/#find-us">Find LEB EATS and check opening hours</a><details class="measurement-choice"><summary>Website measurement</summary><p>We count page views and button taps by page section and traffic source. Click totals are anonymous. You can turn this off in this browser.</p><label><input type="checkbox" data-measurement-optout> Turn off website measurement</label></details></footer>
   </main>
 </body>
 </html>

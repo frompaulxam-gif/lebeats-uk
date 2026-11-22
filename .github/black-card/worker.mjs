@@ -1,3 +1,4 @@
+import clickMap from "./clicks.json";
 import { accountRequest } from "./accounts.mjs";
 
 const origins = new Set(["https://lebeats.uk", "https://www.lebeats.uk"]);
@@ -56,11 +57,23 @@ export default {
 
       const data = await readPayload(request).catch(() => null);
       if (activity) {
-        if (!actions.has(data?.action) || !sources.has(data?.source)) return new Response(null, { status: 422, headers });
-        await env.DB.prepare(`
-          INSERT INTO website_activity (day, source, action, total) VALUES (date('now'), ?, ?, 1)
+        const { action, source, placement } = data ?? {};
+        const validAction = placement === undefined ? actions.has(action)
+          : typeof placement === "string" && Object.hasOwn(clickMap.areas, placement) && clickMap.areas[placement].actions.includes(action);
+        if (!validAction || !sources.has(source)) return new Response(null, { status: 422, headers });
+        const day = new Date().toISOString().slice(0, 10);
+        const total = env.DB.prepare(`
+          INSERT INTO website_activity (day, source, action, total) VALUES (?, ?, ?, 1)
           ON CONFLICT(day, source, action) DO UPDATE SET total = total + 1
-        `).bind(data.source, data.action).run();
+        `).bind(day, source, action);
+        if (placement === undefined) await total.run();
+        else {
+          const click = env.DB.prepare(`
+            INSERT INTO website_button_clicks (day, source, placement, action, total) VALUES (?, ?, ?, ?, 1)
+            ON CONFLICT(day, source, placement, action) DO UPDATE SET total = total + 1
+          `).bind(day, source, placement, action);
+          await env.DB.batch([total, click]);
+        }
         return new Response(null, { status: 204, headers });
       }
       const name = typeof data?.name === "string" ? data.name.trim() : "";
