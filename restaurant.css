@@ -275,10 +275,11 @@ nav.categories { display: flex; flex-wrap: wrap; }
 }
 .midweek-offer strong {
   display: inline-block;
-  font: 900 clamp(21px, 2.35vw, 36px)/1.15 "Cooper Black", Georgia, serif;
-  margin-bottom: .2em;
+  font: 700 clamp(19px, 2.1vw, 30px)/1.25 Manrope, sans-serif;
+  margin-bottom: .15em;
 }
 .midweek-offer strong span {
+  font: 900 clamp(21px, 2.35vw, 36px)/1.15 "Cooper Black", Georgia, serif;
   white-space: nowrap;
 }
 .menu-board-group .midweek-menu {
