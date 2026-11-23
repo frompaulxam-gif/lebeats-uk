@@ -4,11 +4,12 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark"><meta name="robots" content="noindex">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://leb-eats-black-card.raspy-waterfall-454f.workers.dev; img-src 'self' https://lebeats.uk; font-src 'self' https://lebeats.uk; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://lebeats.uk/assets/libphonenumber/phone.js; style-src 'self'; connect-src 'self' https://leb-eats-black-card.raspy-waterfall-454f.workers.dev; img-src 'self' https://lebeats.uk; font-src 'self' https://lebeats.uk; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>Your account · LEB EATS</title>
   <link rel="icon" href="https://lebeats.uk/assets/logo.png">
-  <link rel="stylesheet" href="/account/account.css">
-  <script src="/account/account.js?v=member-clicks-1" defer></script>
+  <link rel="stylesheet" href="/account/account.css?v=phone-1">
+  <script defer src="https://lebeats.uk/assets/libphonenumber/phone.js"></script>
+  <script src="/account/account.js?v=phone-1" defer></script>
 </head>
 <body>
   <header><div class="wrap"><a class="brand" href="https://lebeats.uk/" aria-label="LEB EATS home">LEB EATS</a><a class="back" href="https://lebeats.uk/">Back to the restaurant <span aria-hidden="true">↗</span></a></div></header>
@@ -27,6 +28,16 @@
         <form method="post" action="/account/api/register">
           <label>Your name<input name="name" autocomplete="name" maxlength="100" placeholder="Alex Taylor" required></label>
           <label>Email address<input name="email" type="email" autocomplete="username" maxlength="254" placeholder="alex@example.com" spellcheck="false" autocapitalize="none" required></label>
+          <div class="phone-field">
+            <label for="register-phone">Phone number (optional)</label>
+            <div class="phone-row">
+              <div class="dial-picker">
+                <span id="dial-label" aria-hidden="true">🇬🇧 +44</span>
+                <select id="dial-country" name="country" aria-label="Country calling code" autocomplete="country"><option value="GB" selected>🇬🇧 United Kingdom (+44)</option></select>
+              </div>
+              <input id="register-phone" type="tel" name="phone" inputmode="tel" autocomplete="tel-national" maxlength="40" placeholder="7700 900123">
+            </div>
+          </div>
           <label>Password<input name="password" type="password" autocomplete="new-password" minlength="15" maxlength="128" aria-describedby="new-password-help" required></label>
           <small id="new-password-help">Use at least 15 characters. A few words work well.</small>
           <button>Create account</button>
@@ -67,7 +78,8 @@
           <div class="key-actions"><button class="secondary" type="button" id="copy">Copy key</button><button type="button" id="saved">I’ve saved it</button></div>
         </div>
         <section class="reward"><h2>Loyalty rewards</h2><p>Coming soon. You’ll find your rewards here when the scheme opens.</p></section>
-        <dl><dt>Email address</dt><dd id="member-email"></dd></dl>
+        <dl><div><dt>Email address</dt><dd id="member-email"></dd></div>
+          <div id="member-phone-row" hidden><dt>Phone number</dt><dd id="member-phone"></dd></div></dl>
         <details id="click-settings">
           <summary>Click history</summary>
           <p>If you turn this on, the LEB EATS team can see your name alongside the buttons you tap while signed in, where they appeared, when you tapped and how you reached the site. We show the last 30 days.</p>

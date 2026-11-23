@@ -16,6 +16,27 @@ function saveTabSession(value) {
   } catch { /* Private browsers that disable storage can still use the open page. */ }
 }
 const serviceOrigin = brandedPage ? "https://leb-eats-black-card.raspy-waterfall-454f.workers.dev" : location.origin;
+const dialCountry = byId("dial-country");
+const registerPhone = byId("register-phone");
+const phoneNumbers = window.libphonenumber;
+const flag = code => String.fromCodePoint(...Array.from(code, c => 127397 + c.charCodeAt(0)));
+if (phoneNumbers) {
+  const names = typeof Intl.DisplayNames === "function" ? new Intl.DisplayNames(["en-GB"], {type:"region"}) : null;
+  const countries = phoneNumbers.getCountries().map(code => ({code, name:names?.of(code) || code}));
+  countries.sort((a,b) => a.name.localeCompare(b.name, "en-GB"));
+  dialCountry.replaceChildren(...countries.map(({code, name}) => new Option(
+    flag(code) + " " + name + " (+" + phoneNumbers.getCountryCallingCode(code) + ")", code, code === "GB", code === "GB"
+  )));
+}
+function showDialCode() {
+  const code = dialCountry.value;
+  byId("dial-label").textContent = flag(code) + " +" + (phoneNumbers?.getCountryCallingCode(code) || "44");
+  registerPhone.placeholder = code === "GB" ? "7700 900123" : "Phone number";
+  registerPhone.setCustomValidity("");
+}
+dialCountry.addEventListener("change", showDialCode);
+registerPhone.addEventListener("input", () => registerPhone.setCustomValidity(""));
+registerPhone.form.addEventListener("reset", () => queueMicrotask(showDialCode));
 let member = null;
 let ready = false;
 let busy = false;
@@ -37,6 +58,7 @@ async function api(action, data) {
   if (!response.ok) {
     const error = new Error(result.error || "We couldn’t complete that request. Please try again.");
     error.status = response.status;
+    error.field = result.field;
     throw error;
   }
   if (useTabSession && result.tabSession) saveTabSession(result.tabSession);
@@ -58,6 +80,8 @@ function show(focus = false) {
   document.body.classList.toggle("signed-in", Boolean(member));
   byId("card-holder").textContent = member?.name || "LEB EATS · Uppingham Road";
   byId("member-email").textContent = member?.email || "";
+  byId("member-phone").textContent = member?.phone || "";
+  byId("member-phone-row").hidden = !member?.phone;
   byId("member-intro").textContent = member ? "Welcome, " + member.name + "." : "";
   byId("notice").textContent = "";
   if (focus) byId(view).querySelector("h1").focus();
@@ -183,6 +207,11 @@ for (const form of document.querySelectorAll("form")) {
         byId("key-box").hidden = false;
       }
     } catch (error) {
+      if (error.field === "phone" && form === registerPhone.form) {
+        registerPhone.setCustomValidity(error.message);
+        registerPhone.reportValidity();
+        return;
+      }
       announce(error.message === "Failed to fetch" ? "Check your connection and try again." : error.message);
     } finally { setBusy(false); }
   });

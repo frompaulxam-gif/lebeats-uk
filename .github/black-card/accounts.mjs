@@ -1,3 +1,4 @@
+import phoneNumbers from "../../assets/libphonenumber/phone.js";
 import { memberActivity } from "./member-activity.mjs";
 import { randomBytes, scryptSync, createHash, timingSafeEqual } from "node:crypto";
 
@@ -66,7 +67,7 @@ function sessionInsert(db, token, accountId, version, request) {
 async function sessionAccount(db, request) {
   const key = sessionDigest(request);
   if (!key) return null;
-  return db.prepare(`SELECT a.id,a.name,a.email FROM loyalty_sessions s JOIN loyalty_accounts a ON a.id=s.account_id
+  return db.prepare(`SELECT a.id,a.name,a.email,a.phone FROM loyalty_sessions s JOIN loyalty_accounts a ON a.id=s.account_id
     AND a.session_version=s.version WHERE s.token_digest=? AND s.expires_at>unixepoch()`).bind(key).first();
 }
 
@@ -78,33 +79,47 @@ async function register(db, data, email, request) {
   const name = typeof data.name === "string" ? data.name.trim() : "";
   if (!name || name.length > 100 || /[\u0000-\u001f\u007f]/u.test(name)) return reply(422, { error: "Enter your name." });
   if (!validPassword(data.password)) return reply(422, { error: "Use a password of at least 15 characters." });
+  let phone = null;
+  if (data.phone != null && data.phone !== "") {
+    const validInput = typeof data.phone === "string" && data.phone.length <= 40;
+    const country = data.country ?? "GB";
+    if (!validInput || typeof country !== "string" || !phoneNumbers.isSupportedCountry(country)) {
+      return reply(422, { field:"phone", error:"Check the country code and phone number, or leave it blank." });
+    }
+    const input = data.phone.trim();
+    if (input) {
+      const parsed = phoneNumbers.parsePhoneNumberFromString(input, {defaultCountry:country, extract:false});
+      if (!parsed?.isPossible() || parsed.ext) return reply(422, { field:"phone", error:"Check the country code and phone number, or leave it blank." });
+      phone = parsed.number;
+    }
+  }
   const id = crypto.randomUUID();
   const token = random(32);
   const recoveryKey = newRecoveryKey();
   const [created] = await db.batch([
-    db.prepare(`INSERT INTO loyalty_accounts (id,email,name,password_digest,recovery_digest)
-      VALUES (?,?,?,?,?) ON CONFLICT(email) DO NOTHING`).bind(id, email, name, passwordDigest(data.password), digest(recoveryKey)),
+    db.prepare(`INSERT INTO loyalty_accounts (id,email,name,phone,password_digest,recovery_digest)
+      VALUES (?,?,?,?,?,?) ON CONFLICT(email) DO NOTHING`).bind(id, email, name, phone, passwordDigest(data.password), digest(recoveryKey)),
     sessionInsert(db, token, id, 1, request)
   ]);
   if (!created.meta.changes) return reply(409, { error: "An account already uses this email. Sign in or reset your password." });
-  return sessionReply(request, 201, { member: { id, name, email }, recoveryKey }, token);
+  return sessionReply(request, 201, { member: { id, name, email, phone }, recoveryKey }, token);
 }
 
 async function login(db, password, email, request) {
   if (typeof password !== "string" || !password || password.length > 128) return invalidLogin();
-  const account = await db.prepare("SELECT id,name,email,password_digest,session_version FROM loyalty_accounts WHERE email=?").bind(email).first();
+  const account = await db.prepare("SELECT id,name,email,phone,password_digest,session_version FROM loyalty_accounts WHERE email=?").bind(email).first();
   if (!passwordMatches(password, account?.password_digest || dummyPassword) || !account) return invalidLogin();
   const token = random(32);
   const result = await sessionInsert(db, token, account.id, account.session_version, request).run();
   if (!result.meta.changes) return invalidLogin();
-  return sessionReply(request, 200, { member: { id: account.id, email: account.email, name: account.name } }, token);
+  return sessionReply(request, 200, { member: { id: account.id, email: account.email, name: account.name, phone: account.phone } }, token);
 }
 
 async function reset(db, data, email, request) {
   if (!validPassword(data.password)) return reply(422, { error: "Use a new password of at least 15 characters." });
   const key = typeof data.key === "string" ? data.key.trim().toLowerCase() : "";
   if (!/^(?:[0-9a-f]{4}-){7}[0-9a-f]{4}$/.test(key)) return invalidKey();
-  const account = await db.prepare("SELECT id,name,email,session_version FROM loyalty_accounts WHERE email=? AND recovery_digest=?").bind(email, digest(key)).first();
+  const account = await db.prepare("SELECT id,name,email,phone,session_version FROM loyalty_accounts WHERE email=? AND recovery_digest=?").bind(email, digest(key)).first();
   if (!account) return invalidKey();
   const token = random(32);
   const recoveryKey = newRecoveryKey();
@@ -117,7 +132,7 @@ async function reset(db, data, email, request) {
       SELECT ?,id,session_version,unixepoch()+? FROM loyalty_accounts WHERE id=? AND recovery_digest=?`).bind(digest(token), lifetime(request), account.id, digest(recoveryKey))
   ]);
   if (!changed.meta.changes) return invalidKey();
-  return sessionReply(request, 200, { member: { id: account.id, name: account.name, email: account.email }, recoveryKey }, token);
+  return sessionReply(request, 200, { member: { id: account.id, name: account.name, email: account.email, phone: account.phone }, recoveryKey }, token);
 }
 
 async function replaceKey(db, request, password) {
@@ -149,7 +164,7 @@ export async function accountRequest(request, env, ctx, readPayload) {
     assetUrl.pathname = url.pathname.slice("/account".length);
     const asset = await env.ACCOUNT_ASSETS.fetch(new Request(assetUrl, request));
     const response = new Response(asset.body, asset);
-    response.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' https://lebeats.uk; font-src 'self' https://lebeats.uk; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'");
+    response.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' https://lebeats.uk/assets/libphonenumber/phone.js; style-src 'self'; connect-src 'self'; img-src 'self' https://lebeats.uk; font-src 'self' https://lebeats.uk; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'");
     response.headers.set("Cache-Control", "no-store");
     response.headers.set("Referrer-Policy", "no-referrer");
     response.headers.set("X-Content-Type-Options", "nosniff");
