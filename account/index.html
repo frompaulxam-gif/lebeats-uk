@@ -8,7 +8,7 @@
   <title>Your account · LEB EATS</title>
   <link rel="icon" href="https://lebeats.uk/assets/logo.png">
   <link rel="stylesheet" href="/account/account.css">
-  <script src="/account/account.js?v=branded-2" defer></script>
+  <script src="/account/account.js?v=member-clicks-1" defer></script>
 </head>
 <body>
   <header><div class="wrap"><a class="brand" href="https://lebeats.uk/" aria-label="LEB EATS home">LEB EATS</a><a class="back" href="https://lebeats.uk/">Back to the restaurant <span aria-hidden="true">↗</span></a></div></header>
@@ -68,6 +68,13 @@
         </div>
         <section class="reward"><h2>Loyalty rewards</h2><p>Coming soon. You’ll find your rewards here when the scheme opens.</p></section>
         <dl><dt>Email address</dt><dd id="member-email"></dd></dl>
+        <details id="click-settings">
+          <summary>Click history</summary>
+          <p>If you turn this on, the LEB EATS team can see your name alongside the buttons you tap while signed in, where they appeared, when you tapped and how you reached the site. We show the last 30 days.</p>
+          <p>This is optional. You can use your loyalty account either way. Turning it off deletes your saved click history.</p>
+          <button type="button" class="secondary" id="click-choice" disabled>Checking setting…</button>
+          <p id="click-status" role="status"></p>
+        </details>
         <details id="manage-key"><summary>Replace recovery key</summary>
           <p>If you’ve lost your key, enter your password to get a new one. Your old key will expire.</p>
           <form method="post" action="/account/api/replace-key">

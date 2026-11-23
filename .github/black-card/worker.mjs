@@ -1,12 +1,10 @@
-import clickMap from "./clicks.json";
+import { knownButton, sources } from "./member-activity.mjs";
 import { accountRequest } from "./accounts.mjs";
 
 const origins = new Set(["https://lebeats.uk", "https://www.lebeats.uk"]);
 const originalConsent = "Sign up for Black Card updates and LEB EATS discounts by email.";
 const loyaltyConsent = "Sign up for Loyalty Card updates and LEB EATS discounts by email.";
 const maxBytes = 4096;
-const sources = new Set(["instagram", "facebook", "tiktok", "google", "google_business",
-  "google_ads", "meta_ads", "poster", "email", "direct", "internal", "other", "internal_test"]);
 const actions = new Set(["home_page", "menu_page", "menu_open", "call", "email_tap",
   "deliveroo", "uber_eats", "directions", "form_view", "form_start", "instagram_tap", "tiktok_tap"]);
 
@@ -30,6 +28,10 @@ async function readPayload(request) {
 }
 
 export default {
+  async scheduled(_event, env) {
+    await env.DB.prepare("DELETE FROM member_click_history WHERE clicked_at <= unixepoch('now','-30 days')").run();
+  },
+
   async fetch(request, env, ctx) {
     const path = new URL(request.url).pathname;
     if (path === "/account" || path.startsWith("/account/")) return accountRequest(request, env, ctx, readPayload);
@@ -59,7 +61,7 @@ export default {
       if (activity) {
         const { action, source, placement } = data ?? {};
         const validAction = placement === undefined ? actions.has(action)
-          : typeof placement === "string" && Object.hasOwn(clickMap.areas, placement) && clickMap.areas[placement].actions.includes(action);
+          : knownButton(placement, action);
         if (!validAction || !sources.has(source)) return new Response(null, { status: 422, headers });
         const day = new Date().toISOString().slice(0, 10);
         const total = env.DB.prepare(`

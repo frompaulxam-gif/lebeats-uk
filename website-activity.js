@@ -1,5 +1,27 @@
 (() => {
   const endpoint = "https://leb-eats-black-card.raspy-waterfall-454f.workers.dev/events";
+  const apiBase = new URL("/account/api/", endpoint).href;
+  let receipt = null;
+  let permissionRevision = 0;
+  function sessionOptions() {
+    let token;
+    try { token = sessionStorage.getItem("leb.account.tab"); } catch {}
+    return token ? { credentials: "omit", headers: {"Authorization":"Bearer " + token, "X-LEB-Session":"tab"} }
+      : {credentials:"include", headers:{}};
+  }
+  async function refreshPermission() {
+    const revision = ++permissionRevision;
+    receipt = null;
+    if (disabled || document.hidden || location.origin !== "https://lebeats.uk") return;
+    try {
+      const response = await fetch(apiBase + "activity-setting?scope=buttons", {
+        ...sessionOptions(), cache:"no-store", referrerPolicy:"no-referrer"
+      });
+      if (!response.ok) return;
+      const permission = await response.json();
+      if (revision === permissionRevision) receipt = permission.receipt;
+    } catch { /* Aggregate counts work independently of the account service. */ }
+  }
   const preferenceKey = "lebeats.measurement.off";
   const privacySignal = navigator.globalPrivacyControl === true || navigator.doNotTrack === "1";
   let disabled = privacySignal;
@@ -10,6 +32,7 @@
     checkbox.disabled = privacySignal;
     checkbox.addEventListener("change", () => {
       disabled = checkbox.checked;
+      refreshPermission();
       try {
         if (disabled) localStorage.setItem(preferenceKey, "1");
         else localStorage.removeItem(preferenceKey);
@@ -21,7 +44,12 @@
     if (event.key !== preferenceKey && event.key !== null) return;
     disabled = privacySignal || event.newValue === "1";
     if (checkbox) checkbox.checked = disabled;
+    refreshPermission();
   });
+
+  document.addEventListener("visibilitychange", refreshPermission);
+  window.addEventListener("pageshow", e => { if (e.persisted) refreshPermission(); });
+  refreshPermission();
 
   const knownSources = new Set(["instagram", "facebook", "tiktok", "google", "google_business",
     "google_ads", "meta_ads", "poster", "email", "direct", "other", "internal_test"]);
@@ -46,6 +74,13 @@
     fetch(endpoint, { method: "POST", credentials: "omit", keepalive: true,
       referrerPolicy: "no-referrer", body: JSON.stringify({action, source, placement})
     }).catch(() => {});
+    if (placement && receipt) {
+      const options = sessionOptions();
+      fetch(apiBase + "member-click", { ...options, method:"POST", keepalive:true,
+        headers:{...options.headers, "Content-Type":"application/json"}, referrerPolicy:"no-referrer",
+        body:JSON.stringify({eventId:crypto.randomUUID(), receipt, action, placement, source})
+      }).catch(() => {});
+    }
   }
   // Carry only a recognised channel between the two public pages. No visitor identifier.
   if (!disabled && source !== "internal") {

@@ -1,3 +1,4 @@
+import { memberActivity } from "./member-activity.mjs";
 import { randomBytes, scryptSync, createHash, timingSafeEqual } from "node:crypto";
 
 const siteOrigin = "https://lebeats.uk";
@@ -177,9 +178,13 @@ async function accountApi(request, env, ctx, readPayload, url, branded) {
     const supported = (request.headers.get("Cookie") || "").split(/;\s*/).includes(probeCookie + "=1");
     return reply(200, { supported });
   }
-  if (!paths.has(action)) return reply(404, {});
-  if (request.method !== (action === "session" ? "GET" : "POST")) return reply(405, {});
+  const activitySetting = action === "activity-setting";
+  const trackingRequest = activitySetting || action === "member-click";
+  if (!trackingRequest && !paths.has(action)) return reply(404, {});
+  const readSetting = activitySetting && request.method === "GET";
+  if (!readSetting && request.method !== (action === "session" ? "GET" : "POST")) return reply(405, {});
   try {
+    if (readSetting) return await memberActivity(action, request, env, sessionDigest(request), readPayload, reply);
     if (action === "session") {
       const member = await sessionAccount(env.DB, request);
       if (member) return reply(200, { member });
@@ -189,6 +194,7 @@ async function accountApi(request, env, ctx, readPayload, url, branded) {
     }
     if (!branded && request.headers.get("Origin") !== url.origin) return reply(403, {});
     if (request.headers.get("Content-Type")?.split(";")[0].trim() !== "application/json") return reply(415, {});
+    if (trackingRequest) return await memberActivity(action, request, env, sessionDigest(request), readPayload, reply);
     if (action === "logout") {
       const key = sessionDigest(request);
       if (key) await env.DB.prepare("DELETE FROM loyalty_sessions WHERE token_digest=?").bind(key).run();

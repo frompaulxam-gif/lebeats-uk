@@ -53,6 +53,7 @@ function show(focus = false) {
   const hash = location.hash.slice(1);
   const view = member ? "member" : publicViews.includes(hash) ? hash : "register";
   for (const id of views) byId(id).hidden = id !== view;
+  resetClickSettings();
   byId("loading").hidden = true;
   document.body.classList.toggle("signed-in", Boolean(member));
   byId("card-holder").textContent = member?.name || "LEB EATS · Uppingham Road";
@@ -61,6 +62,63 @@ function show(focus = false) {
   byId("notice").textContent = "";
   if (focus) byId(view).querySelector("h1").focus();
 }
+
+const clickSettings = byId("click-settings");
+const clickChoice = byId("click-choice");
+const clickStatus = byId("click-status");
+let clickState = null;
+let settingRevision = 0;
+
+function resetClickSettings() {
+  settingRevision++;
+  clickSettings.open = false;
+  clickState = null;
+  clickChoice.disabled = true;
+  clickStatus.textContent = "";
+}
+
+function measurementOff() {
+  if (navigator.globalPrivacyControl === true || navigator.doNotTrack === "1") return true;
+  try { return localStorage.getItem("lebeats.measurement.off") === "1"; } catch { return false; }
+}
+
+async function updateClickSettings(change = false) {
+  if (!member || !clickSettings.open) return;
+  const accountId = member.id;
+  const revision = ++settingRevision;
+  const saving = change && clickState !== null;
+  clickChoice.disabled = true;
+  clickChoice.textContent = saving ? "Saving…" : "Checking setting…";
+  clickStatus.textContent = "";
+  try {
+    const result = await api("activity-setting", saving ? {accountId, enabled: !clickState} : undefined);
+    if (revision !== settingRevision || !clickSettings.open) return;
+    if (result.id !== accountId) throw new Error("Reload your account to check this setting.");
+    clickState = Boolean(result.receipt);
+    const blocked = measurementOff();
+    clickChoice.textContent = clickState ? "Turn off and delete my history" : "Turn on click history";
+    clickChoice.disabled = blocked && !clickState;
+    clickStatus.textContent = clickState
+      ? (blocked ? "On for your account. Measurement is paused in this browser." : "Click history is on.")
+      : (saving ? "Click history is off. Your saved clicks have been deleted." : "Click history is off.")
+        + (blocked ? " Website measurement is turned off in this browser." : "");
+  } catch (error) {
+    if (revision !== settingRevision || !clickSettings.open) return;
+    clickState = null;
+    clickChoice.disabled = false;
+    clickChoice.textContent = "Check setting again";
+    clickStatus.textContent = error.status === 401 ? "Your session has ended. Sign in again." : "We couldn’t confirm your setting. Please check again.";
+  }
+}
+
+clickSettings.addEventListener("toggle", () => {
+  if (clickSettings.open) updateClickSettings();
+  else { settingRevision++; clickState = null; }
+});
+clickChoice.addEventListener("click", () => updateClickSettings(true));
+window.addEventListener("storage", e => {
+  if ((e.key === "lebeats.measurement.off" || e.key === null) && clickState !== null) updateClickSettings();
+});
 
 function announce(message) {
   byId("notice").textContent = message;

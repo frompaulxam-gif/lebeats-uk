@@ -3,6 +3,7 @@
   "main": "worker.mjs",
   "account_id": "be8daeb89d40360597623ce3dd102b4d",
   "compatibility_date": "2026-04-01",
+  "triggers": { "crons": ["17 * * * *"] },
   "workers_dev": true,
   "preview_urls": false,
   "observability": {
