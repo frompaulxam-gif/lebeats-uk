@@ -9,7 +9,8 @@
   <link rel="icon" href="https://lebeats.uk/assets/logo.png">
   <link rel="stylesheet" href="/account/account.css?v=phone-1">
   <script defer src="https://lebeats.uk/assets/libphonenumber/phone.js"></script>
-  <script src="/account/account.js?v=phone-1" defer></script>
+  <script src="/account/client.js?v=welcome-1" defer></script>
+  <script src="/account/account.js?v=welcome-1" defer></script>
 </head>
 <body>
   <header><div class="wrap"><a class="brand" href="https://lebeats.uk/" aria-label="LEB EATS home">LEB EATS</a><a class="back" href="https://lebeats.uk/">Back to the restaurant <span aria-hidden="true">↗</span></a></div></header>
@@ -24,7 +25,7 @@
       <p id="loading" role="status">Opening your account…</p>
       <div id="register" hidden>
         <h1 tabindex="-1">Create an account.</h1>
-        <p class="intro">Set up your LEB EATS account. Loyalty rewards are coming soon.</p>
+        <p class="intro">Create your LEB EATS account and get 50 free loyalty points.</p>
         <form method="post" action="/account/api/register">
           <label>Your name<input name="name" autocomplete="name" maxlength="100" placeholder="Alex Taylor" required></label>
           <label>Email address<input name="email" type="email" autocomplete="username" maxlength="254" placeholder="alex@example.com" spellcheck="false" autocapitalize="none" required></label>
@@ -77,7 +78,7 @@
           <code id="key-value"></code>
           <div class="key-actions"><button class="secondary" type="button" id="copy">Copy key</button><button type="button" id="saved">I’ve saved it</button></div>
         </div>
-        <section class="reward"><h2>Loyalty rewards</h2><p>Coming soon. You’ll find your rewards here when the scheme opens.</p></section>
+        <section class="reward"><h2>Your loyalty balance</h2><strong id="member-points"></strong><p>Rewards to spend your points on are coming soon.</p></section>
         <dl><div><dt>Email address</dt><dd id="member-email"></dd></div>
           <div id="member-phone-row" hidden><dt>Phone number</dt><dd id="member-phone"></dd></div></dl>
         <details id="click-settings">

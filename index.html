@@ -84,10 +84,11 @@
   ]
 }
   </script>
-  <link rel="icon" href="/assets/logo.png"><link rel="stylesheet" href="/restaurant.css?v=midweek-price">
+  <link rel="icon" href="/assets/logo.png"><link rel="stylesheet" href="/restaurant.css?v=welcome-1">
   <script defer src="/assets/libphonenumber/phone.js"></script>
   <script defer src="/website-activity.js?v=member-clicks-1"></script>
-  <script defer src="/restaurant.js?v=loyalty-source"></script>
+  <script defer src="/account/client.js?v=welcome-1"></script>
+  <script defer src="/restaurant.js?v=welcome-1"></script>
 </head>
 <body>
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
@@ -377,7 +378,7 @@
 </div></div></section>
 <section class="signup-band" id="loyalty-card">
   <div id="black-card"><h2>THE LOYALTY<br>CARD.</h2></div>
-  <div><p>Create your LEB EATS account today. Loyalty rewards are coming soon.</p>
+  <div><p>Create your LEB EATS account today and get 50 free loyalty points.</p>
     <div class="loyalty-actions"><a data-measure-click="loyalty.account_create" class="button cream" href="/account/">Create an account</a>
     <a data-measure-click="loyalty.account_login" class="loyalty-login" href="/account/#login">Sign in</a></div>
     <button data-measure-click="loyalty.loyalty_popup_open" class="loyalty-updates open-card" aria-haspopup="dialog">Get email updates &amp; discounts</button>
@@ -448,7 +449,7 @@
   </div>
   <div class="card-copy">
     <h2 id="card-title">GET A CHANCE FOR A FREE MEAL</h2>
-    <p id="card-description">Sign up for Loyalty Card updates and LEB EATS discounts by email.</p>
+    <p id="card-description">Sign up for Loyalty Card updates and LEB EATS discounts by email. Then create an account for 50 free loyalty points.</p>
     <form id="card-form" action="https://leb-eats-black-card.raspy-waterfall-454f.workers.dev/signup" method="post">
       <label>Full name<input id="card-name" name="name" type="text" autocomplete="name" enterkeyhint="next" maxlength="100" placeholder="Alex Taylor" required></label>
       <label>Email address<input id="card-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" enterkeyhint="next" maxlength="254" placeholder="alex@example.com" required></label>
@@ -464,6 +465,17 @@
       </div>
       <button class="card-action" type="submit">Count me in</button>
     </form>
+    <form id="bonus-form" method="post" hidden>
+      <label>Choose a password<input name="password" type="password" autocomplete="new-password" minlength="15" maxlength="128" aria-describedby="bonus-help" required></label>
+      <small id="bonus-help">Use at least 15 characters. A few words work well.</small>
+      <button class="card-action" type="submit">Create account &amp; get 50 points</button>
+      <button class="card-skip" type="button">Maybe later</button>
+    </form>
+    <div id="bonus-confirmation" hidden>
+      <strong>Save your recovery key</strong>
+      <p>You’ll need it if you forget your password.</p>
+      <code id="bonus-key"></code>
+    </div>
     <p id="card-status" role="status" tabindex="-1"></p>
     <a data-measure-click="loyalty_popup.account_open" class="card-account-link" href="/account/">Open your loyalty account</a>
   </div>

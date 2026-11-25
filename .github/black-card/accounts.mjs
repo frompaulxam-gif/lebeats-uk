@@ -67,7 +67,7 @@ function sessionInsert(db, token, accountId, version, request) {
 async function sessionAccount(db, request) {
   const key = sessionDigest(request);
   if (!key) return null;
-  return db.prepare(`SELECT a.id,a.name,a.email,a.phone FROM loyalty_sessions s JOIN loyalty_accounts a ON a.id=s.account_id
+  return db.prepare(`SELECT a.id,a.name,a.email,a.phone,a.points FROM loyalty_sessions s JOIN loyalty_accounts a ON a.id=s.account_id
     AND a.session_version=s.version WHERE s.token_digest=? AND s.expires_at>unixepoch()`).bind(key).first();
 }
 
@@ -97,29 +97,29 @@ async function register(db, data, email, request) {
   const token = random(32);
   const recoveryKey = newRecoveryKey();
   const [created] = await db.batch([
-    db.prepare(`INSERT INTO loyalty_accounts (id,email,name,phone,password_digest,recovery_digest)
-      VALUES (?,?,?,?,?,?) ON CONFLICT(email) DO NOTHING`).bind(id, email, name, phone, passwordDigest(data.password), digest(recoveryKey)),
+    db.prepare(`INSERT INTO loyalty_accounts (id,email,name,phone,password_digest,recovery_digest,points)
+      VALUES (?,?,?,?,?,?,50) ON CONFLICT(email) DO NOTHING RETURNING points`).bind(id, email, name, phone, passwordDigest(data.password), digest(recoveryKey)),
     sessionInsert(db, token, id, 1, request)
   ]);
   if (!created.meta.changes) return reply(409, { error: "An account already uses this email. Sign in or reset your password." });
-  return sessionReply(request, 201, { member: { id, name, email, phone }, recoveryKey }, token);
+  return sessionReply(request, 201, { member: { id, name, email, phone, points: created.results[0].points }, recoveryKey }, token);
 }
 
 async function login(db, password, email, request) {
   if (typeof password !== "string" || !password || password.length > 128) return invalidLogin();
-  const account = await db.prepare("SELECT id,name,email,phone,password_digest,session_version FROM loyalty_accounts WHERE email=?").bind(email).first();
+  const account = await db.prepare("SELECT id,name,email,phone,points,password_digest,session_version FROM loyalty_accounts WHERE email=?").bind(email).first();
   if (!passwordMatches(password, account?.password_digest || dummyPassword) || !account) return invalidLogin();
   const token = random(32);
   const result = await sessionInsert(db, token, account.id, account.session_version, request).run();
   if (!result.meta.changes) return invalidLogin();
-  return sessionReply(request, 200, { member: { id: account.id, email: account.email, name: account.name, phone: account.phone } }, token);
+  return sessionReply(request, 200, { member: { id: account.id, email: account.email, name: account.name, phone: account.phone, points: account.points } }, token);
 }
 
 async function reset(db, data, email, request) {
   if (!validPassword(data.password)) return reply(422, { error: "Use a new password of at least 15 characters." });
   const key = typeof data.key === "string" ? data.key.trim().toLowerCase() : "";
   if (!/^(?:[0-9a-f]{4}-){7}[0-9a-f]{4}$/.test(key)) return invalidKey();
-  const account = await db.prepare("SELECT id,name,email,phone,session_version FROM loyalty_accounts WHERE email=? AND recovery_digest=?").bind(email, digest(key)).first();
+  const account = await db.prepare("SELECT id,name,email,phone,points,session_version FROM loyalty_accounts WHERE email=? AND recovery_digest=?").bind(email, digest(key)).first();
   if (!account) return invalidKey();
   const token = random(32);
   const recoveryKey = newRecoveryKey();
@@ -132,7 +132,7 @@ async function reset(db, data, email, request) {
       SELECT ?,id,session_version,unixepoch()+? FROM loyalty_accounts WHERE id=? AND recovery_digest=?`).bind(digest(token), lifetime(request), account.id, digest(recoveryKey))
   ]);
   if (!changed.meta.changes) return invalidKey();
-  return sessionReply(request, 200, { member: { id: account.id, name: account.name, email: account.email, phone: account.phone }, recoveryKey }, token);
+  return sessionReply(request, 200, { member: { id: account.id, name: account.name, email: account.email, phone: account.phone, points: account.points }, recoveryKey }, token);
 }
 
 async function replaceKey(db, request, password) {

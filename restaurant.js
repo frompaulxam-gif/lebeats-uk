@@ -34,14 +34,18 @@ function syncCardCountry() {
 cardCountry.addEventListener("change", syncCardCountry);
 const cardDescription = document.getElementById("card-description");
 const seenKey = "lebeats.blackCardSignup.seen";
+const cardTitle = document.getElementById("card-title");
+const initialTitle = cardTitle.textContent;
+const initialDescription = cardDescription.textContent;
+const accountLink = dialog.querySelector(".card-account-link");
+const bonusForm = document.getElementById("bonus-form");
+const bonusSubmit = bonusForm.querySelector('[type="submit"]');
+const confirmation = document.getElementById("bonus-confirmation");
+const recoveryKey = document.getElementById("bonus-key");
+let signupDetails = null;
 let openTimer;
 function openSignup() {
   clearTimeout(openTimer);
-  if (cardForm.hidden) {
-    cardForm.hidden = false;
-    cardDescription.hidden = false;
-    cardStatus.textContent = "";
-  }
   if (!dialog.open) dialog.showModal();
   try { sessionStorage.setItem(seenKey, "1"); } catch {}
 }
@@ -97,12 +101,16 @@ cardForm.addEventListener("submit", async event => {
       return;
     }
     if ((await response.json()).saved !== true) throw new Error("Unconfirmed signup");
+    signupDetails = { name: cardName.value.trim(), email: cardEmail.value.trim(), phone, country: cardCountry.value };
     cardForm.reset();
     syncCardCountry();
     cardForm.hidden = true;
-    cardDescription.hidden = true;
-    cardStatus.textContent = "You’re on the list for Loyalty Card updates and discounts.";
-    if (dialog.open) cardStatus.focus({ preventScroll: true });
+    bonusForm.hidden = false;
+    cardTitle.textContent = "GET 50 FREE POINTS";
+    cardDescription.textContent = "You’re on the email list. Choose a password to create your loyalty account and collect your 50 points.";
+    accountLink.href = "/account/#login";
+    accountLink.textContent = "Already have an account? Sign in";
+    if (dialog.open) bonusForm.elements.password.focus();
   } catch {
     cardStatus.textContent = "We couldn’t confirm your signup. Check your connection and try again.";
   } finally {
@@ -111,6 +119,64 @@ cardForm.addEventListener("submit", async event => {
     cardSubmit.textContent = cardActionLabel;
     cardName.readOnly = cardEmail.readOnly = cardPhone.readOnly = false;
   }
+});
+bonusForm.addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!signupDetails || bonusSubmit.disabled) return;
+  bonusSubmit.disabled = true;
+  cardStatus.textContent = "Creating your account…";
+  try {
+    // Check the active account and use the same cookie fallback as the account page.
+    let existing;
+    try {
+      existing = (await api("session")).member;
+    } catch (error) {
+      if (error.status !== 401) throw error;
+      if (useTabSession) saveTabSession("");
+      else if (brandedPage) useTabSession = !(await api("cookie-check")).supported;
+    }
+    if (existing) {
+      cardTitle.textContent = "YOU’RE ON THE LIST";
+      cardDescription.textContent = "Your email signup is saved.";
+      cardStatus.textContent = "You’re already signed in. Open your account to see your points.";
+      accountLink.href = "/account/";
+      accountLink.textContent = "View my account";
+      bonusForm.reset();
+      bonusForm.hidden = true;
+      return;
+    }
+    const result = await api("register", { ...signupDetails, password: bonusForm.elements.password.value });
+    signupDetails = null;
+    bonusForm.reset();
+    bonusForm.hidden = true;
+    cardTitle.textContent = "YOU’RE IN!";
+    cardDescription.textContent = "Your loyalty balance is " + result.member.points + " points.";
+    recoveryKey.textContent = result.recoveryKey;
+    confirmation.hidden = false;
+    accountLink.href = "/account/";
+    accountLink.textContent = "View my account";
+    cardStatus.textContent = "";
+    if (dialog.open) accountLink.focus({ preventScroll: true });
+  } catch (error) {
+    cardStatus.textContent = error.status === 409
+      ? "This email already has an account. Sign in below to view your balance."
+      : error.message === "Failed to fetch" ? "Check your connection and try again." : error.message;
+  } finally {
+    bonusSubmit.disabled = false;
+  }
+});
+bonusForm.querySelector(".card-skip").addEventListener("click", () => dialog.close());
+dialog.addEventListener("close", () => {
+  if (bonusSubmit.disabled || cardSubmit.disabled) return;
+  signupDetails = null;
+  bonusForm.reset();
+  bonusForm.hidden = confirmation.hidden = true;
+  recoveryKey.textContent = cardStatus.textContent = "";
+  cardTitle.textContent = initialTitle;
+  cardDescription.textContent = initialDescription;
+  accountLink.href = "/account/";
+  accountLink.textContent = "Open your loyalty account";
+  cardForm.hidden = false;
 });
 cardName.addEventListener("input", () => cardName.setCustomValidity(""));
 cardPhone.addEventListener("input", () => cardPhone.setCustomValidity(""));

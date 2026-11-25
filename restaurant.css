@@ -121,16 +121,16 @@ body:has(dialog[open]) { overflow: hidden; }
 .card-copy { padding: clamp(18px, 1.8vw, 27px); }
 #card-title { font: 900 clamp(33px, 2.7vw, 42px)/.98 LebDisplay, Impact, sans-serif; letter-spacing: 0; }
 #card-description { margin: 9px 0 19px; font-size: 14px; color: var(--card-muted); }
-#card-form { display: grid; gap: 12px; }
-#card-form label { display: block; font-size: 13px; font-weight: 700; }
+:is(#card-form, #bonus-form) { display: grid; gap: 12px; }
+:is(#card-form, #bonus-form) label { display: block; font-size: 13px; font-weight: 700; }
 .card-optional { font-weight: 400; color: var(--card-muted); }
-#card-form input, .card-phone-row {
+:is(#card-form, #bonus-form) input, .card-phone-row {
   width: 100%; min-width: 0; margin-top: 4px; border: 1px solid var(--card-line);
   border-radius: 5px; background: var(--card-input); color: var(--card-text);
 }
-#card-form input { display: block; min-height: 44px; padding: 9px 12px; font: inherit; font-weight: 400; font-size: 16px; }
-#card-form input::placeholder { color: var(--card-example); opacity: 1; }
-#card-form input:autofill { box-shadow: 0 0 0 50px var(--card-input) inset; -webkit-text-fill-color: var(--card-text); caret-color: var(--card-text); }
+:is(#card-form, #bonus-form) input { display: block; min-height: 44px; padding: 9px 12px; font: inherit; font-weight: 400; font-size: 16px; }
+:is(#card-form, #bonus-form) input::placeholder { color: var(--card-example); opacity: 1; }
+:is(#card-form, #bonus-form) input:autofill { box-shadow: 0 0 0 50px var(--card-input) inset; -webkit-text-fill-color: var(--card-text); caret-color: var(--card-text); }
 .card-phone-row { display: flex; align-items: stretch; }
 .card-country { position: relative; flex: none; border-right: 1px solid var(--card-line); border-radius: 5px 0 0 5px; }
 .card-country-face { min-width: 99px; height: 44px; padding: 0 10px; display: flex; gap: 5px; align-items: center; justify-content: center; font-weight: 700; }
@@ -144,7 +144,6 @@ body:has(dialog[open]) { overflow: hidden; }
 #card-dialog :is(input, button):focus-visible, .card-country:focus-within { outline: 3px solid var(--card-focus); outline-offset: 2px; z-index: 2; }
 #card-dialog .card-close:focus-visible { outline-color: #fff; outline-offset: -4px; }
 #card-status:not(:empty) { margin-top: 14px; color: var(--card-text); }
-#card-form[hidden] + #card-status { font-weight: 700; }
 @media (prefers-color-scheme: dark) {
   #card-dialog {
     color-scheme: dark;
@@ -164,7 +163,7 @@ body:has(dialog[open]) { overflow: hidden; }
   .card-copy { padding: 15px; }
   #card-title { font-size: 31px; }
   #card-description { margin-bottom: 10px; }
-  #card-form { gap: 8px; }
+  :is(#card-form, #bonus-form) { gap: 8px; }
 }
 .menu-board-grid > .menu-board-group { grid-column: auto; grid-row: auto; }
 .menu-board-group dl { margin: 0; }
@@ -510,3 +509,6 @@ nav.categories { display: flex; flex-wrap: wrap; }
 .loyalty-login, .loyalty-updates, .card-account-link { display:inline-flex; align-items:center; min-height:44px; color:inherit; font:inherit; font-weight:700; text-decoration:underline; text-underline-offset:.2em; }
 .loyalty-updates { margin-top:.5rem; padding:0; border:0; background:transparent; cursor:pointer; }
 .card-account-link { margin-top:.35rem; font-size:.92rem; }
+
+.card-skip { background: transparent; color: var(--card-text); min-height: 42px; text-decoration: underline; }
+#bonus-key { display: block; margin-block: 10px; overflow-wrap: anywhere; user-select: all; }

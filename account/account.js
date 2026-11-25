@@ -1,21 +1,6 @@
 const byId = id => document.getElementById(id);
 const views = ["register", "login", "reset", "member"];
 const publicViews = views.slice(0, 3);
-const brandedPage = location.origin === "https://lebeats.uk";
-const tabKey = "leb.account.tab";
-let tabSession = "";
-if (brandedPage) {
-  try { tabSession = sessionStorage.getItem(tabKey) || ""; } catch {}
-}
-let useTabSession = Boolean(tabSession);
-function saveTabSession(value) {
-  tabSession = value;
-  try {
-    if (value) sessionStorage.setItem(tabKey, value);
-    else sessionStorage.removeItem(tabKey);
-  } catch { /* Private browsers that disable storage can still use the open page. */ }
-}
-const serviceOrigin = brandedPage ? "https://leb-eats-black-card.raspy-waterfall-454f.workers.dev" : location.origin;
 const dialCountry = byId("dial-country");
 const registerPhone = byId("register-phone");
 const phoneNumbers = window.libphonenumber;
@@ -42,29 +27,6 @@ let ready = false;
 let busy = false;
 let loadingId = 0;
 
-async function api(action, data) {
-  const options = { credentials: useTabSession ? "omit" : "include", cache: "no-store", headers: {} };
-  if (useTabSession) {
-    options.headers["X-LEB-Session"] = "tab";
-    if (tabSession) options.headers.Authorization = "Bearer " + tabSession;
-  }
-  if (data !== undefined) {
-    options.method = "POST";
-    options.headers["Content-Type"] = "application/json";
-    options.body = JSON.stringify(data);
-  }
-  const response = await fetch(serviceOrigin + "/account/api/" + action, options);
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    const error = new Error(result.error || "We couldn’t complete that request. Please try again.");
-    error.status = response.status;
-    error.field = result.field;
-    throw error;
-  }
-  if (useTabSession && result.tabSession) saveTabSession(result.tabSession);
-  return result;
-}
-
 function clearKey() {
   byId("key-value").textContent = "";
   byId("key-box").hidden = true;
@@ -79,6 +41,7 @@ function show(focus = false) {
   byId("loading").hidden = true;
   document.body.classList.toggle("signed-in", Boolean(member));
   byId("card-holder").textContent = member?.name || "LEB EATS · Uppingham Road";
+  byId("member-points").textContent = member ? member.points.toLocaleString("en-GB") + " points" : "";
   byId("member-email").textContent = member?.email || "";
   byId("member-phone").textContent = member?.phone || "";
   byId("member-phone-row").hidden = !member?.phone;
