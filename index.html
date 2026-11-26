@@ -84,13 +84,13 @@
   ]
 }
   </script>
-  <link rel="icon" href="/assets/logo.png"><link rel="stylesheet" href="/restaurant.css?v=home-card-1">
+  <link rel="icon" href="/assets/logo.png"><link rel="stylesheet" href="/restaurant.css?v=signup-2">
   <link rel="stylesheet" href="/account/trail.css?v=float-1">
   <script defer src="/account/trail.js?v=leb-box-1"></script>
   <script defer src="/assets/libphonenumber/phone.js"></script>
   <script defer src="/website-activity.js?v=member-clicks-1"></script>
-  <script defer src="/account/client.js?v=home-card-1"></script>
-  <script defer src="/restaurant.js?v=home-card-1"></script>
+  <script defer src="/account/client.js?v=signup-2"></script>
+  <script defer src="/restaurant.js?v=signup-2"></script>
 </head>
 <body>
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
@@ -464,7 +464,7 @@
     <form id="card-form" action="https://leb-eats-black-card.raspy-waterfall-454f.workers.dev/signup" method="post">
       <label>Full name<input id="card-name" name="name" type="text" autocomplete="name" enterkeyhint="next" maxlength="100" placeholder="Alex Taylor" required></label>
       <label>Email address<input id="card-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" enterkeyhint="next" maxlength="254" placeholder="alex@example.com" required></label>
-      <div>
+      <div id="card-phone-field">
         <label for="card-phone">Phone number <span class="card-optional">(optional)</span></label>
         <div class="card-phone-row">
           <div class="card-country">
@@ -477,10 +477,11 @@
       <button class="card-action" type="submit">Count me in</button>
     </form>
     <form id="bonus-form" method="post" hidden>
-      <label>Choose a password<input name="password" type="password" autocomplete="new-password" minlength="15" maxlength="128" aria-describedby="bonus-help" required></label>
-      <small id="bonus-help">Use at least 15 characters. A few words work well.</small>
+      <label>Choose a password<input name="password" type="password" autocomplete="new-password" minlength="8" pattern="(?=.*[A-Z])(?=.*[0-9]).{8,}" title="At least 8 characters, including a capital letter and a number" maxlength="128" aria-describedby="bonus-help" required></label>
+      <small id="bonus-help">At least 8 characters, including a capital letter and a number.</small>
       <button class="card-action" type="submit">Create account &amp; get my stamp</button>
-      <button class="card-skip" type="button">Maybe later</button>
+      <button class="card-skip" type="button">Save for 7 days on this device</button>
+      <button id="another-signup" class="card-skip" type="button">Use another email</button>
     </form>
     <div id="bonus-confirmation" hidden>
       <strong>Save your recovery key</strong>

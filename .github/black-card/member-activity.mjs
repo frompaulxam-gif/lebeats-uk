@@ -1,4 +1,4 @@
-import clickMap from "./clicks.json";
+import clickMap from "./clicks.json" with { type: "json" };
 
 export const sources = new Set(["instagram", "facebook", "tiktok", "google", "google_business",
   "google_ads", "meta_ads", "poster", "email", "direct", "internal", "other", "internal_test"]);

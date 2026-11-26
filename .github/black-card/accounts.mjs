@@ -72,14 +72,16 @@ async function sessionAccount(db, request) {
     AND a.session_version=s.version WHERE s.token_digest=? AND s.expires_at>unixepoch()`).bind(key).first();
 }
 
-const validPassword = password => typeof password === "string" && Array.from(password).length >= 15 && password.length <= 128;
+const passwordHelp = "Use at least 8 characters, including a capital letter and a number.";
+const validPassword = password => typeof password === "string" && Array.from(password).length >= 8
+  && password.length <= 128 && /[A-Z]/.test(password) && /[0-9]/.test(password);
 const invalidLogin = () => reply(401, { error: "Check your email and password and try again." });
 const invalidKey = () => reply(401, { error: "Check your email and recovery key and try again." });
 
 async function register(db, data, email, request) {
   const name = typeof data.name === "string" ? data.name.trim() : "";
   if (!name || name.length > 100 || /[\u0000-\u001f\u007f]/u.test(name)) return reply(422, { error: "Enter your name." });
-  if (!validPassword(data.password)) return reply(422, { error: "Use a password of at least 15 characters." });
+  if (!validPassword(data.password)) return reply(422, { field: "password", error: passwordHelp });
   let phone = null;
   if (data.phone != null && data.phone !== "") {
     const validInput = typeof data.phone === "string" && data.phone.length <= 40;
@@ -97,11 +99,18 @@ async function register(db, data, email, request) {
   const id = crypto.randomUUID();
   const token = random(32);
   const recoveryKey = newRecoveryKey();
-  const [created] = await db.batch([
+  const writes = [
     db.prepare(`INSERT INTO loyalty_accounts (id,email,name,phone,password_digest,recovery_digest,points)
       VALUES (?,?,?,?,?,?,1) ON CONFLICT(email) DO NOTHING RETURNING points`).bind(id, email, name, phone, passwordDigest(data.password), digest(recoveryKey)),
     sessionInsert(db, token, id, 1, request)
-  ]);
+  ];
+  if (data.emailOffers === true) {
+    // Only the winning registration can opt in. Retried or conflicting submissions cannot change consent.
+    writes.push(db.prepare(`INSERT INTO signups (email,name,phone,consent_text)
+      SELECT email,name,phone,? FROM loyalty_accounts WHERE id=?
+      ON CONFLICT(email) DO NOTHING`).bind("Email me LEB EATS offers and loyalty updates.", id));
+  }
+  const [created] = await db.batch(writes);
   if (!created.meta.changes) return reply(409, { error: "An account already uses this email. Sign in or reset your password." });
   return sessionReply(request, 201, { member: { id, name, email, phone, points: created.results[0].points }, recoveryKey }, token);
 }
@@ -117,7 +126,7 @@ async function login(db, password, email, request) {
 }
 
 async function reset(db, data, email, request) {
-  if (!validPassword(data.password)) return reply(422, { error: "Use a new password of at least 15 characters." });
+  if (!validPassword(data.password)) return reply(422, { field: "password", error: passwordHelp });
   const key = typeof data.key === "string" ? data.key.trim().toLowerCase() : "";
   if (!/^(?:[0-9a-f]{4}-){7}[0-9a-f]{4}$/.test(key)) return invalidKey();
   const account = await db.prepare("SELECT id,name,email,phone,points,session_version FROM loyalty_accounts WHERE email=? AND recovery_digest=?").bind(email, digest(key)).first();

@@ -78,9 +78,40 @@ function clearKey() {
   byId("copy").textContent = "Copy key";
 }
 
+const registration = registerPhone.form;
+let displayedDraft;
+function showRegistrationDraft() {
+  const draft = readSignupDraft();
+  const identity = draft ? JSON.stringify(draft) : "";
+  if (identity === displayedDraft) return;
+  displayedDraft = identity;
+  registration.reset();
+  for (const field of ["email", "name"]) {
+    registration.elements[field].value = draft?.[field] || "";
+    registration.elements[field].closest("label").hidden = Boolean(draft);
+  }
+  if (draft) {
+    registerPhone.value = draft.phone;
+    if (dialCountry.querySelector('option[value="' + CSS.escape(draft.country) + '"]')) dialCountry.value = draft.country;
+    byId("login").querySelector("[name=email]").value = draft.email;
+  }
+  registerPhone.closest(".phone-field").hidden = Boolean(draft?.phone);
+  registration.elements.emailOffers.closest("label").hidden = Boolean(draft);
+  byId("signup-resume").hidden = !draft;
+  byId("resume-email").textContent = draft?.email || "";
+  showDialCode();
+}
+byId("different-details").addEventListener("click", () => {
+  clearSignupDraft();
+  showRegistrationDraft();
+  registration.elements.name.focus();
+});
+
 function show(focus = false) {
   const hash = location.hash.slice(1);
   const view = member ? "member" : publicViews.includes(hash) ? hash : "register";
+  if (!member) showRegistrationDraft();
+  else { clearSignupDraft(); displayedDraft = undefined; }
   for (const id of views) byId(id).hidden = id !== view;
   resetClickSettings();
   byId("loading").hidden = true;
@@ -202,7 +233,9 @@ for (const form of document.querySelectorAll("form")) {
     byId("notice").textContent = "";
     try {
       const action = form.getAttribute("action").split("/").pop();
-      const response = await api(action, Object.fromEntries(new FormData(form)));
+      const data = Object.fromEntries(new FormData(form));
+      if (action === "register") data.emailOffers = registration.elements.emailOffers.checked;
+      const response = await api(action, data);
       member = response.member;
       for (const accountForm of document.forms) accountForm.reset();
       byId("manage-key").open = false;
@@ -214,6 +247,14 @@ for (const form of document.querySelectorAll("form")) {
         byId("key-box").hidden = false;
       }
     } catch (error) {
+      if (error.status === 409 && form === registration) {
+        byId("login").querySelector("[name=email]").value = registration.elements.email.value;
+        registration.elements.password.value = "";
+        history.replaceState(null, "", "#login");
+        show(true);
+        announce("An account already uses this email. Enter your existing password to see your card.");
+        return;
+      }
       if (error.field === "phone" && form === registerPhone.form) {
         registerPhone.setCustomValidity(error.message);
         registerPhone.reportValidity();

@@ -55,3 +55,6 @@ details{border-block-start:1px solid var(--line);margin:1rem 0;padding-block:.4r
 summary{cursor:pointer;min-height:44px;padding-block:.6rem}
 [hidden]{display:none!important}
 @media(max-width:700px){.wrap{width:min(32rem,calc(100% - 2.5rem))}main.wrap{display:block;padding-block:2.1rem}.card{display:none}.signed-in .card{display:block;margin-bottom:1.8rem;padding:1.1rem 1.4rem}.signed-in .card-title{font-size:3.7rem;margin:1.25rem 0}.signed-in .card-title br{display:none}.signed-in .card-title br:after{content:" "}.card-top strong{font-size:1.4rem}.card-top,.card-foot{font-size:.82rem}.brand{font-size:1.75rem}.back{font-size:.83rem}.switch{margin-top:.55rem}header .wrap{min-height:4rem}}
+.offers-option{display:flex;align-items:center;gap:.65rem;font-weight:400}
+.offers-option input{width:1.2rem;min-height:0;height:1.2rem;flex:none;accent-color:var(--btn)}
+#signup-resume{margin:0 0 1rem}#resume-email{overflow-wrap:anywhere}

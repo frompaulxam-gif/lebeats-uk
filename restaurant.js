@@ -112,11 +112,42 @@ const bonusForm = document.getElementById("bonus-form");
 const bonusSubmit = bonusForm.querySelector('[type="submit"]');
 const confirmation = document.getElementById("bonus-confirmation");
 const recoveryKey = document.getElementById("bonus-key");
-let signupDetails = null;
+const phoneField = document.getElementById("card-phone-field");
+let signupDetails = readSignupDraft();
 let openTimer;
+function showAccountStep() {
+  cardForm.hidden = true;
+  bonusForm.hidden = false;
+  if (!signupDetails.phone) {
+    bonusForm.prepend(phoneField);
+    cardCountry.value = signupDetails.country;
+    syncCardCountry();
+  }
+  cardTitle.textContent = "GET YOUR FIRST STAMP";
+  cardDescription.textContent = "You’re on the email list as " + signupDetails.email + ". Choose a password to start collecting stamps.";
+  accountLink.href = "/account/#login";
+  accountLink.textContent = "Already have an account? Sign in";
+  if (dialog.open) (signupDetails.phone ? bonusForm.elements.password : cardPhone).focus();
+}
+function showEmailStep() {
+  cardForm.insertBefore(phoneField, cardSubmit);
+  cardForm.reset();
+  syncCardCountry();
+  cardName.setCustomValidity("");
+  bonusForm.reset();
+  bonusForm.hidden = confirmation.hidden = true;
+  recoveryKey.textContent = cardStatus.textContent = "";
+  cardTitle.textContent = initialTitle;
+  cardDescription.textContent = initialDescription;
+  accountLink.href = "/account/";
+  accountLink.textContent = "Open your loyalty account";
+  cardForm.hidden = false;
+}
 function openSignup() {
   clearTimeout(openTimer);
   if (!dialog.open) dialog.showModal();
+  if (!bonusSubmit.disabled) signupDetails = readSignupDraft();
+  if (signupDetails && !homeMemberId && !bonusSubmit.disabled) showAccountStep();
   try { sessionStorage.setItem(seenKey, "1"); } catch {}
 }
 cardForm.addEventListener("submit", async event => {
@@ -172,15 +203,10 @@ cardForm.addEventListener("submit", async event => {
     }
     if ((await response.json()).saved !== true) throw new Error("Unconfirmed signup");
     signupDetails = { name: cardName.value.trim(), email: cardEmail.value.trim(), phone, country: cardCountry.value };
+    saveSignupDraft(signupDetails);
     cardForm.reset();
     syncCardCountry();
-    cardForm.hidden = true;
-    bonusForm.hidden = false;
-    cardTitle.textContent = "GET YOUR FIRST STAMP";
-    cardDescription.textContent = "You’re on the email list. Choose a password to create your loyalty account and collect your first stamp.";
-    accountLink.href = "/account/#login";
-    accountLink.textContent = "Already have an account? Sign in";
-    if (dialog.open) bonusForm.elements.password.focus();
+    showAccountStep();
   } catch {
     cardStatus.textContent = "We couldn’t confirm your signup. Check your connection and try again.";
   } finally {
@@ -193,6 +219,12 @@ cardForm.addEventListener("submit", async event => {
 bonusForm.addEventListener("submit", async event => {
   event.preventDefault();
   if (!signupDetails || bonusSubmit.disabled) return;
+  const registration = {
+    name: signupDetails.name, email: signupDetails.email,
+    phone: signupDetails.phone || cardPhone.value.trim(),
+    country: signupDetails.phone ? signupDetails.country : cardCountry.value,
+    password: bonusForm.elements.password.value
+  };
   bonusSubmit.disabled = true;
   cardStatus.textContent = "Creating your account…";
   try {
@@ -206,6 +238,8 @@ bonusForm.addEventListener("submit", async event => {
       else if (brandedPage) useTabSession = !(await api("cookie-check")).supported;
     }
     if (existing) {
+      signupDetails = null;
+      clearSignupDraft();
       cardTitle.textContent = "YOU’RE ON THE LIST";
       cardDescription.textContent = "Your email signup is saved.";
       cardStatus.textContent = "You’re already signed in. Open your account to see your loyalty card.";
@@ -215,7 +249,7 @@ bonusForm.addEventListener("submit", async event => {
       bonusForm.hidden = true;
       return;
     }
-    const result = await api("register", { ...signupDetails, password: bonusForm.elements.password.value });
+    const result = await api("register", registration);
     signupDetails = null;
     bonusForm.reset();
     bonusForm.hidden = true;
@@ -228,6 +262,18 @@ bonusForm.addEventListener("submit", async event => {
     cardStatus.textContent = "";
     if (dialog.open) accountLink.focus({ preventScroll: true });
   } catch (error) {
+    if (error.field === "phone" && !signupDetails?.phone) {
+      cardPhone.setCustomValidity(error.message);
+      cardPhone.reportValidity();
+    }
+    if (error.status === 409) {
+      bonusForm.elements.password.value = "";
+      bonusForm.hidden = true;
+      cardTitle.textContent = "WELCOME BACK";
+      cardDescription.textContent = "Your email signup is saved.";
+      accountLink.href = "/account/#login";
+      accountLink.textContent = "Sign in to my account";
+    }
     cardStatus.textContent = error.status === 409
       ? "This email already has an account. Sign in below to view your balance."
       : error.message === "Failed to fetch" ? "Check your connection and try again." : error.message;
@@ -235,18 +281,22 @@ bonusForm.addEventListener("submit", async event => {
     bonusSubmit.disabled = false;
   }
 });
-bonusForm.querySelector(".card-skip").addEventListener("click", () => dialog.close());
-dialog.addEventListener("close", () => {
-  if (bonusSubmit.disabled || cardSubmit.disabled) return;
+bonusForm.querySelector(".card-skip").addEventListener("click", () => {
+  if (bonusSubmit.disabled) return;
+  if (signupDetails) saveSignupDraft(signupDetails, true);
+  dialog.close();
+});
+document.getElementById("another-signup").addEventListener("click", () => {
+  if (bonusSubmit.disabled) return;
   signupDetails = null;
-  bonusForm.reset();
-  bonusForm.hidden = confirmation.hidden = true;
-  recoveryKey.textContent = cardStatus.textContent = "";
-  cardTitle.textContent = initialTitle;
-  cardDescription.textContent = initialDescription;
-  accountLink.href = "/account/";
-  accountLink.textContent = "Open your loyalty account";
-  cardForm.hidden = false;
+  clearSignupDraft();
+  showEmailStep();
+  cardName.focus();
+});
+dialog.addEventListener("close", () => {
+  bonusForm.elements.password.value = "";
+  if (bonusSubmit.disabled || cardSubmit.disabled) return;
+  showEmailStep();
 });
 cardName.addEventListener("input", () => cardName.setCustomValidity(""));
 cardPhone.addEventListener("input", () => cardPhone.setCustomValidity(""));
