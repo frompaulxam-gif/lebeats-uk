@@ -1,3 +1,73 @@
+const homeLoyalty = document.getElementById("my-loyalty-card");
+const homeCardContent = document.getElementById("home-card-content");
+let homeMemberId = null;
+let homeCardRequest = 0;
+let homeCardBusy = false;
+let homeCardInView = false;
+let homeCardRetry;
+
+function hideHomeCard() {
+  homeMemberId = null;
+  homeLoyalty.hidden = true;
+  homeCardContent.replaceChildren();
+}
+
+async function refreshHomeCard() {
+  if (document.hidden || homeCardBusy) return;
+  clearTimeout(homeCardRetry);
+  const revision = ++homeCardRequest;
+  homeCardBusy = true;
+  try {
+    const {id, card} = await api("loyalty");
+    if (revision !== homeCardRequest) return;
+    if (id !== homeMemberId) {
+      const trail = document.createElement("leb-trail");
+      trail.setAttribute("customer", "");
+      homeCardContent.replaceChildren(trail);
+      homeMemberId = id;
+    }
+    const firstReveal = homeLoyalty.hidden;
+    homeLoyalty.hidden = false;
+    homeCardContent.firstElementChild.update(card);
+    if (firstReveal && location.hash === "#my-loyalty-card") {
+      homeLoyalty.scrollIntoView({behavior:"instant", block:"start"});
+    }
+  } catch (error) {
+    if (revision !== homeCardRequest) return;
+    hideHomeCard();
+    if (!error.status || error.status >= 500) homeCardRetry = setTimeout(refreshHomeCard, 30000);
+  } finally {
+    if (revision === homeCardRequest) homeCardBusy = false;
+  }
+}
+
+function clearHomeSession() {
+  clearTimeout(homeCardRetry);
+  homeCardRequest++;
+  homeCardBusy = false;
+  hideHomeCard();
+}
+function homeSessionChanged() {
+  clearHomeSession();
+  return refreshHomeCard();
+}
+window.addEventListener("leb-account-changed", homeSessionChanged);
+window.addEventListener("storage", event => {
+  if (event.key === "leb.account.changed" || event.key === null) homeSessionChanged();
+});
+window.addEventListener("pagehide", clearHomeSession);
+window.addEventListener("pageshow", event => { if (event.persisted) homeSessionChanged(); });
+window.addEventListener("focus", refreshHomeCard);
+window.addEventListener("online", refreshHomeCard);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshHomeCard(); });
+const homeCardObserver = new IntersectionObserver(([entry]) => {
+  homeCardInView = entry.isIntersecting;
+  if (homeCardInView && homeMemberId) refreshHomeCard();
+});
+homeCardObserver.observe(homeLoyalty);
+setInterval(() => { if (homeCardInView && homeMemberId) refreshHomeCard(); }, 6000);
+const initialHomeCard = refreshHomeCard();
+
 const dialog = document.getElementById("card-dialog");
 const cardForm = document.getElementById("card-form");
 const cardStatus = document.getElementById("card-status");
@@ -192,7 +262,12 @@ dialog.addEventListener("click", event => {
 });
 window.addEventListener("load", () => {
   try { if (sessionStorage.getItem(seenKey)) return; } catch {}
-  openTimer = setTimeout(() => { if (!document.querySelector("dialog[open]")) openSignup(); }, 1500);
+  openTimer = setTimeout(async () => {
+    await initialHomeCard;
+    if (homeMemberId || document.querySelector("dialog[open]")) return;
+    try { if (sessionStorage.getItem(seenKey)) return; } catch {}
+    openSignup();
+  }, 1500);
 }, { once: true });
 
 const heroTrack = document.querySelector(".hero-track");

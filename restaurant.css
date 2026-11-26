@@ -512,3 +512,33 @@ nav.categories { display: flex; flex-wrap: wrap; }
 
 .card-skip { background: transparent; color: var(--card-text); min-height: 42px; text-decoration: underline; }
 #bonus-key { display: block; margin-block: 10px; overflow-wrap: anywhere; user-select: all; }
+
+.home-loyalty {
+  --muted: #485447;
+  --line: #b4bba5;
+  --soft: #f8f8ee;
+  --btn: var(--green);
+  padding: clamp(32px, 5vw, 72px) 6%;
+  background: #e9eddf;
+  color: var(--ink);
+}
+.home-loyalty-inner { max-width: 1120px; margin-inline: auto; }
+.home-loyalty-heading { display:flex; align-items:baseline; justify-content:space-between; gap:1rem; margin-bottom:clamp(16px,2.4vw,30px); }
+.home-loyalty-heading h2 { color:var(--green); font-size:clamp(34px,4vw,60px); }
+.home-loyalty .text-link { white-space:nowrap; }
+.home-loyalty .trail-play { justify-self:start; border:1px solid var(--line); background:transparent; color:inherit; border-radius:.35rem; min-height:44px; font-weight:700; cursor:pointer; }
+.home-loyalty .reward-row summary { padding-block:.5rem; cursor:pointer; font-weight:700; }
+@media(min-width:760px) {
+  .home-loyalty leb-trail {
+    display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);
+    grid-template-areas:"art count" "art next" "art play" "art selection" "art rewards";
+    grid-template-rows:auto auto auto auto 1fr;
+    align-items:start; column-gap:clamp(24px,4vw,64px);
+  }
+  .home-loyalty .trail-art {grid-area:art}
+  .home-loyalty .trail-caption {grid-area:count; margin-top:0}
+  .home-loyalty .trail-next {grid-area:next}
+  .home-loyalty .trail-play {grid-area:play}
+  .home-loyalty .trail-selection {grid-area:selection}
+  .home-loyalty .trail-rewards {grid-area:rewards}
+}

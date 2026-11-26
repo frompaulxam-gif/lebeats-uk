@@ -33,5 +33,10 @@ async function api(action, data) {
     throw error;
   }
   if (useTabSession && result.tabSession) saveTabSession(result.tabSession);
+  if (["login","logout","register","reset"].includes(action)) {
+    // Other open pages recheck their own session, including browsers with tab-only sign-in.
+    try { localStorage.setItem("leb.account.changed", crypto.randomUUID()); } catch {}
+    window.dispatchEvent(new Event("leb-account-changed"));
+  }
   return result;
 }
