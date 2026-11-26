@@ -8,24 +8,27 @@
   <title>Your account · LEB EATS</title>
   <link rel="icon" href="https://lebeats.uk/assets/logo.png">
   <link rel="stylesheet" href="/account/account.css?v=phone-1">
+  <link rel="stylesheet" href="/account/trail.css?v=1">
+  <script defer src="/account/trail.js?v=1"></script>
   <script defer src="https://lebeats.uk/assets/libphonenumber/phone.js"></script>
   <script src="/account/client.js?v=welcome-1" defer></script>
-  <script src="/account/account.js?v=one-point" defer></script>
+  <script src="/account/account.js?v=trail-1" defer></script>
 </head>
 <body>
   <header><div class="wrap"><a class="brand" href="https://lebeats.uk/" aria-label="LEB EATS home">LEB EATS</a><a class="back" href="https://lebeats.uk/">Back to the restaurant <span aria-hidden="true">↗</span></a></div></header>
   <main class="wrap">
-    <aside class="card" aria-label="LEB EATS loyalty card">
-      <div class="card-top"><strong>LEB EATS</strong><span>Leicester</span></div>
-      <p class="card-title">LOYALTY<br> CARD.</p>
-      <div class="card-foot"><span id="card-holder">LEB EATS · Uppingham Road</span><span class="mark" aria-hidden="true">✳</span></div>
-    </aside>
+    <aside class="trail-preview"><img src="/account/burgundy-trail.webp" width="1586" height="992" alt="LEB EATS loyalty card. Four stamps earn £5 off and eight earn a free meal."></aside>
+    <section class="trail-panel" id="member-trail" hidden>
+      <h1>Your loyalty card.</h1>
+      <leb-trail id="customer-trail" customer></leb-trail>
+      <p id="trail-status" role="status"></p>
+    </section>
     <section class="panel" aria-label="Customer account">
       <noscript>Turn on JavaScript to use your LEB EATS account.</noscript>
       <p id="loading" role="status">Opening your account…</p>
       <div id="register" hidden>
         <h1 tabindex="-1">Create an account.</h1>
-        <p class="intro">Create your LEB EATS account and get 1 free loyalty point.</p>
+        <p class="intro">Get your first stamp when you join. Collect four for £5 off and eight for a free meal.</p>
         <form method="post" action="/account/api/register">
           <label>Your name<input name="name" autocomplete="name" maxlength="100" placeholder="Alex Taylor" required></label>
           <label>Email address<input name="email" type="email" autocomplete="username" maxlength="254" placeholder="alex@example.com" spellcheck="false" autocapitalize="none" required></label>
@@ -69,7 +72,7 @@
         <p class="switch"><a href="#login">Back to sign in</a></p>
       </div>
       <div id="member" hidden>
-        <h1 tabindex="-1">Your account.</h1>
+        <h2 tabindex="-1">Your account.</h2>
         <p class="intro" id="member-intro"></p>
         <p id="tab-info" hidden>Your browser limits cookies, so this sign-in lasts 15 minutes in this tab.</p>
         <div id="key-box" class="key-box" hidden>
@@ -78,7 +81,7 @@
           <code id="key-value"></code>
           <div class="key-actions"><button class="secondary" type="button" id="copy">Copy key</button><button type="button" id="saved">I’ve saved it</button></div>
         </div>
-        <section class="reward"><h2>Your loyalty balance</h2><strong id="member-points"></strong><p>Rewards to spend your points on are coming soon.</p></section>
+
         <dl><div><dt>Email address</dt><dd id="member-email"></dd></div>
           <div id="member-phone-row" hidden><dt>Phone number</dt><dd id="member-phone"></dd></div></dl>
         <details id="click-settings">

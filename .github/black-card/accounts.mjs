@@ -1,4 +1,5 @@
 import phoneNumbers from "../../assets/libphonenumber/phone.js";
+import { cardState, counterActions, counterRequest } from "./trail.mjs";
 import { memberActivity } from "./member-activity.mjs";
 import { randomBytes, scryptSync, createHash, timingSafeEqual } from "node:crypto";
 
@@ -195,10 +196,16 @@ async function accountApi(request, env, ctx, readPayload, url, branded) {
   }
   const activitySetting = action === "activity-setting";
   const trackingRequest = activitySetting || action === "member-click";
-  if (!trackingRequest && !paths.has(action)) return reply(404, {});
+  const readCard = action === "loyalty";
+  const counter = counterActions.has(action);
+  if (!trackingRequest && !readCard && !counter && !paths.has(action)) return reply(404, {});
   const readSetting = activitySetting && request.method === "GET";
-  if (!readSetting && request.method !== (action === "session" ? "GET" : "POST")) return reply(405, {});
+  if (!readSetting && request.method !== (action === "session" || readCard ? "GET" : "POST")) return reply(405, {});
   try {
+    if (readCard) {
+      const member = await sessionAccount(env.DB, request);
+      return member ? reply(200, {id:member.id,card:await cardState(env.DB, member, true)}) : reply(401, {error:"Sign in to see your card."});
+    }
     if (readSetting) return await memberActivity(action, request, env, sessionDigest(request), readPayload, reply);
     if (action === "session") {
       const member = await sessionAccount(env.DB, request);
@@ -209,6 +216,11 @@ async function accountApi(request, env, ctx, readPayload, url, branded) {
     }
     if (!branded && request.headers.get("Origin") !== url.origin) return reply(403, {});
     if (request.headers.get("Content-Type")?.split(";")[0].trim() !== "application/json") return reply(415, {});
+    if (counter) {
+      const data = await readPayload(request).catch(() => null);
+      if (!data || typeof data !== "object") return reply(422,{error:"Check your details."});
+      return await counterRequest(action, request, env, data, reply);
+    }
     if (trackingRequest) return await memberActivity(action, request, env, sessionDigest(request), readPayload, reply);
     if (action === "logout") {
       const key = sessionDigest(request);

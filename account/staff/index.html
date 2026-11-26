@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="light dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://leb-eats-black-card.raspy-waterfall-454f.workers.dev; img-src 'self' https://lebeats.uk; font-src 'self' https://lebeats.uk; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Loyalty counter · LEB EATS</title>
+  <link rel="icon" href="https://lebeats.uk/assets/logo.png">
+  <link rel="stylesheet" href="/account/account.css?v=phone-1"><link rel="stylesheet" href="/account/trail.css?v=1">
+  <link rel="stylesheet" href="/account/staff/counter.css?v=1">
+  <script src="/account/trail.js?v=1" defer></script><script src="/account/staff/counter.js?v=1" defer></script>
+</head>
+<body>
+<header><div class="wrap"><a class="brand" href="https://lebeats.uk/">LEB EATS</a><a class="back" href="/account/">Customer account ↗</a></div></header>
+<main class="wrap counter-layout">
+  <section class="counter-controls">
+    <h1>Loyalty counter.</h1>
+    <noscript>Turn on JavaScript to use the counter.</noscript>
+    <form id="staff-login" method="post">
+      <label>Staff access code<input type="password" name="code" autocomplete="current-password" required maxlength="128"></label>
+      <button>Open counter</button>
+    </form>
+    <div id="workspace" hidden>
+      <form id="find" method="post">
+        <label>Customer email<input type="email" name="email" placeholder="alex@example.com" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="254" required></label>
+        <button class="secondary">Find customer</button>
+      </form>
+      <div id="customer" hidden>
+        <h2 id="who"></h2><p id="address"></p>
+        <button type="button" id="add">Add order</button>
+        <details id="recent-orders"><summary id="order-count">Recorded orders</summary><ol id="order-list"></ol></details>
+      </div>
+      <form id="redeem" hidden method="post">
+        <h2 id="redeem-title"></h2>
+        <label>Customer’s reward code<input name="code" placeholder="8 characters" required maxlength="9" autocomplete="off" spellcheck="false"></label>
+        <div class="key-actions"><button>Confirm redemption</button><button class="secondary" type="button" id="cancel">Cancel</button></div>
+      </form>
+    </div>
+    <p id="feedback" role="status" aria-live="polite"></p>
+    <button type="button" class="secondary" id="staff-logout" hidden>Lock counter</button>
+  </section>
+  <section aria-label="Customer card" id="card-view" hidden><leb-trail id="counter-trail"></leb-trail></section>
+</main>
+</body></html>

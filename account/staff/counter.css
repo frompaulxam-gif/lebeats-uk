@@ -1,0 +1,10 @@
+main.counter-layout{grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:clamp(2rem,6vw,5rem)}
+.counter-controls{min-width:0}
+#customer,#redeem{margin:1.3rem 0 0;border-top:1px solid var(--line);padding-top:1rem}
+#who,#address{overflow-wrap:anywhere}#address{margin:.1rem 0 .85rem;color:var(--muted)}
+#add{width:100%;background:#780316;color:#fff3d7}
+#staff-logout{margin:1.2rem 0 0}
+#feedback:empty{display:none}#feedback{font-weight:bold;color:var(--ink)}
+@media(max-width:700px){main.counter-layout{display:flex;flex-direction:column;gap:1.4rem}main.counter-layout>section{width:100%}}
+#recent-orders{border:0;margin:.5rem 0 0}#recent-orders summary{font-size:.9rem}
+#order-list{font-size:.85rem;color:var(--muted);padding-inline-start:1.35rem;margin:.3rem 0}

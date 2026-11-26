@@ -29,7 +29,10 @@ async function readPayload(request) {
 
 export default {
   async scheduled(_event, env) {
-    await env.DB.prepare("DELETE FROM member_click_history WHERE clicked_at <= unixepoch('now','-30 days')").run();
+    await env.DB.batch([
+      env.DB.prepare("DELETE FROM member_click_history WHERE clicked_at <= unixepoch('now','-30 days')"),
+      env.DB.prepare("DELETE FROM counter_sessions WHERE expires_at<=unixepoch()")
+    ]);
   },
 
   async fetch(request, env, ctx) {

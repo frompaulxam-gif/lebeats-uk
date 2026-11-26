@@ -106,8 +106,8 @@ cardForm.addEventListener("submit", async event => {
     syncCardCountry();
     cardForm.hidden = true;
     bonusForm.hidden = false;
-    cardTitle.textContent = "GET 1 FREE POINT";
-    cardDescription.textContent = "You’re on the email list. Choose a password to create your loyalty account and collect your free point.";
+    cardTitle.textContent = "GET YOUR FIRST STAMP";
+    cardDescription.textContent = "You’re on the email list. Choose a password to create your loyalty account and collect your first stamp.";
     accountLink.href = "/account/#login";
     accountLink.textContent = "Already have an account? Sign in";
     if (dialog.open) bonusForm.elements.password.focus();
@@ -138,7 +138,7 @@ bonusForm.addEventListener("submit", async event => {
     if (existing) {
       cardTitle.textContent = "YOU’RE ON THE LIST";
       cardDescription.textContent = "Your email signup is saved.";
-      cardStatus.textContent = "You’re already signed in. Open your account to see your points.";
+      cardStatus.textContent = "You’re already signed in. Open your account to see your loyalty card.";
       accountLink.href = "/account/";
       accountLink.textContent = "View my account";
       bonusForm.reset();
@@ -150,7 +150,7 @@ bonusForm.addEventListener("submit", async event => {
     bonusForm.reset();
     bonusForm.hidden = true;
     cardTitle.textContent = "YOU’RE IN!";
-    cardDescription.textContent = "Your loyalty balance is " + result.member.points + (result.member.points === 1 ? " point." : " points.");
+    cardDescription.textContent = "Your welcome stamp is on your card. Three more qualifying orders unlock £5 off.";
     recoveryKey.textContent = result.recoveryKey;
     confirmation.hidden = false;
     accountLink.href = "/account/";

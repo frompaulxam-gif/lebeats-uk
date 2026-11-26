@@ -27,6 +27,39 @@ let ready = false;
 let busy = false;
 let loadingId = 0;
 
+let trailRevision = 0;
+let pendingTrail = false;
+function resetTrail() {
+  trailRevision++;
+  pendingTrail = false;
+  byId("member-trail").hidden = !member;
+  const fresh = document.createElement("leb-trail");
+  fresh.id = "customer-trail";
+  fresh.setAttribute("customer","");
+  byId("customer-trail").replaceWith(fresh);
+  byId("trail-status").textContent = "";
+  if (member) refreshTrail();
+}
+async function refreshTrail() {
+  if (!member || pendingTrail || document.hidden) return;
+  const revision = trailRevision;
+  pendingTrail = true;
+  try {
+    const response = await api("loyalty");
+    if (revision !== trailRevision) return;
+    if (response.id !== member.id) { clearKey(); await load(); return; }
+    byId("customer-trail").update(response.card);
+    byId("trail-status").textContent = "";
+  } catch (error) {
+    if (revision !== trailRevision) return;
+    if (error.status===401) { clearKey(); member = null; history.replaceState(null,"","#login"); show(); announce("Your session has ended. Sign in to see your card."); }
+    else byId("trail-status").textContent = "Couldn’t update your card. We’ll try again shortly.";
+  } finally { if (revision === trailRevision) pendingTrail = false; }
+}
+setInterval(refreshTrail,15000);
+window.addEventListener("focus",refreshTrail);
+document.addEventListener("visibilitychange",refreshTrail);
+
 function clearKey() {
   byId("key-value").textContent = "";
   byId("key-box").hidden = true;
@@ -40,14 +73,13 @@ function show(focus = false) {
   resetClickSettings();
   byId("loading").hidden = true;
   document.body.classList.toggle("signed-in", Boolean(member));
-  byId("card-holder").textContent = member?.name || "LEB EATS · Uppingham Road";
-  byId("member-points").textContent = member ? member.points.toLocaleString("en-GB") + (member.points === 1 ? " point" : " points") : "";
+  resetTrail();
   byId("member-email").textContent = member?.email || "";
   byId("member-phone").textContent = member?.phone || "";
   byId("member-phone-row").hidden = !member?.phone;
   byId("member-intro").textContent = member ? "Welcome, " + member.name + "." : "";
   byId("notice").textContent = "";
-  if (focus) byId(view).querySelector("h1").focus();
+  if (focus) byId(view).querySelector("h1,h2").focus();
 }
 
 const clickSettings = byId("click-settings");
@@ -186,7 +218,7 @@ byId("copy").addEventListener("click", async () => {
     byId("copy").textContent = "Copied";
   } catch { announce("Select the recovery key and copy it to a safe place."); }
 });
-byId("saved").addEventListener("click", () => { clearKey(); byId("member").querySelector("h1").focus(); });
+byId("saved").addEventListener("click", () => { clearKey(); byId("member").querySelector("h1,h2").focus(); });
 byId("logout").addEventListener("click", async () => {
   if (busy) return;
   setBusy(true);
