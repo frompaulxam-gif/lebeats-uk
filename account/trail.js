@@ -8,6 +8,10 @@ const trailRoute = trailStops.map(([x,y],i)=>{
 });
 const cedarShape = "M0 -24 C-3 -18 -9 -14 -15 -12 L-8 -12 Q-12 -7 -19 -5 L-10 -5 Q-14 1 -22 3 L-13 4 Q-17 10 -25 12 Q-14 16 -4 12 L-4 19 L-7 23 H7 L4 19 V12 Q15 16 25 12 Q17 10 13 4 L22 3 Q14 0 10 -5 L19 -5 Q12 -8 8 -12 H15 Q4 -18 0 -24Z";
 const cardLevel = total => total ? (total-1)%8+1 : 0;
+const milestones = {
+  4: {name: "£5 off", numberY: -13, tickX: 43, tickY: 35, label: '<text class="prize-label" y="24">£5 OFF</text>'},
+  8: {name: "Free LEB Box", numberY: -22, tickX: 55, tickY: 39, label: '<text class="prize-label"><tspan x="0" y="11">FREE</tspan> <tspan x="-9" y="32">LEB BOX</tspan></text>'}
+};
 let trailInstance = 0;
 
 function sealOutline() {
@@ -20,7 +24,7 @@ function sealOutline() {
 }
 const seal = sealOutline();
 function stampMarkup([x,y],index) {
-  const n=index+1, prize=n===4 || n===8;
+  const n=index+1, prize=milestones[n];
   const face = prize ? '<path class="coin" d="'+seal+'"/>' : '<circle class="coin" r="41"/>';
   return `<g class="trail-stop stop-${n} ${prize?'prize':''} ${n>4?'red':'green'}" transform="translate(${x} ${y})" role="button" tabindex="0" aria-label="Stamp ${n}">
     <title>Stamp ${n}</title>
@@ -28,13 +32,13 @@ function stampMarkup([x,y],index) {
     <g class="stamp-float">
       <circle class="burst" r="${prize?61:44}"/>
       <g class="impression">${face}
-        <g transform="translate(0 ${prize?-13:0})">
+        <g transform="translate(0 ${prize?.numberY ?? 0})">
           <text class="stamp-number" x="-15" y="14">${n}</text>
           <g transform="translate(15 0) scale(.72)"><path class="cedar" d="${cedarShape}"/></g>
         </g>
-        ${prize?'<text class="prize-label" y="24">'+(n===4?'£5 OFF':'FREE MEAL')+'</text>':''}
+        ${prize?.label ?? ''}
       </g>
-      <g transform="translate(${prize?43:33} ${prize?35:29})"><g class="tick">
+      <g transform="translate(${prize?.tickX ?? 33} ${prize?.tickY ?? 29})"><g class="tick">
         <circle r="24"/><path class="tick-ink" pathLength="1" d="M-13 0 L-4 9 L14 -11"/>
       </g></g>
     </g>
@@ -145,7 +149,7 @@ class LoyaltyTrail extends HTMLElement {
     this.querySelector(".trail-count").textContent=level+" of 8 stamps";
     this.querySelector(".trail-cycle").textContent="Card "+cycle;
     const goal=level<4?4:8, left=goal-level;
-    const next=left ? left+" more qualifying "+(left===1?"order":"orders")+" for "+(goal===4?"£5 off.":"a free meal.") : "Card complete. The next qualifying order starts a new card.";
+    const next=left ? left+" more qualifying "+(left===1?"order":"orders")+" for "+(goal===4?"£5 off.":"a free LEB Box.") : "Card complete. The next qualifying order starts a new card.";
     const welcome=this.state.welcome && total===1 ? "Welcome stamp collected. " : "";
     this.querySelector(".trail-next").textContent=welcome+next;
     this.setMessage("One stamp per qualifying order.");
@@ -158,7 +162,7 @@ class LoyaltyTrail extends HTMLElement {
   animateFrom(previous) {
     this.stopMotion();
     const {total,level}=this.state;
-    const award=level===4?"£5 off":level===8?"Free meal":"";
+    const award=milestones[level]?.name;
     const result=award ? award+" unlocked" : (total===1 && this.state.welcome ? "Welcome stamp collected" : "Stamp "+level+" collected");
     const arrive=()=>{
       this.paint(total);
@@ -208,7 +212,7 @@ class LoyaltyTrail extends HTMLElement {
     if (earned && stamp === 1 && cycle === 1 && welcome) parts.push("welcome stamp");
     if (stamp === 4 || stamp === 8) {
       const reward = this.state.rewards.find(r => r.stamp === (cycle-1)*8 + stamp);
-      parts.push((stamp===4 ? "£5 off" : "Free meal") + (reward ? (reward.usedAt ? " · used" : " · ready to use") : ""));
+      parts.push(milestones[stamp].name + (reward ? (reward.usedAt ? " · used" : " · ready to use") : ""));
     }
     return parts.join(" · ");
   }
@@ -224,7 +228,7 @@ class LoyaltyTrail extends HTMLElement {
       const row = document.createElement("div");
       row.className = "reward-row";
       const name = document.createElement("strong");
-      const title = r.stamp % 8 === 0 ? "Free meal" : "£5 off";
+      const title = milestones[cardLevel(r.stamp)].name;
       name.textContent = title;
       const meta = document.createElement("span");
       const cardNo = Math.ceil(r.stamp/8);
