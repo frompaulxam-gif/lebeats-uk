@@ -41,7 +41,7 @@ function show(focus = false) {
   byId("loading").hidden = true;
   document.body.classList.toggle("signed-in", Boolean(member));
   byId("card-holder").textContent = member?.name || "LEB EATS · Uppingham Road";
-  byId("member-points").textContent = member ? member.points.toLocaleString("en-GB") + " points" : "";
+  byId("member-points").textContent = member ? member.points.toLocaleString("en-GB") + (member.points === 1 ? " point" : " points") : "";
   byId("member-email").textContent = member?.email || "";
   byId("member-phone").textContent = member?.phone || "";
   byId("member-phone-row").hidden = !member?.phone;

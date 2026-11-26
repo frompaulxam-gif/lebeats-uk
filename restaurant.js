@@ -106,8 +106,8 @@ cardForm.addEventListener("submit", async event => {
     syncCardCountry();
     cardForm.hidden = true;
     bonusForm.hidden = false;
-    cardTitle.textContent = "GET 50 FREE POINTS";
-    cardDescription.textContent = "You’re on the email list. Choose a password to create your loyalty account and collect your 50 points.";
+    cardTitle.textContent = "GET 1 FREE POINT";
+    cardDescription.textContent = "You’re on the email list. Choose a password to create your loyalty account and collect your free point.";
     accountLink.href = "/account/#login";
     accountLink.textContent = "Already have an account? Sign in";
     if (dialog.open) bonusForm.elements.password.focus();
@@ -150,7 +150,7 @@ bonusForm.addEventListener("submit", async event => {
     bonusForm.reset();
     bonusForm.hidden = true;
     cardTitle.textContent = "YOU’RE IN!";
-    cardDescription.textContent = "Your loyalty balance is " + result.member.points + " points.";
+    cardDescription.textContent = "Your loyalty balance is " + result.member.points + (result.member.points === 1 ? " point." : " points.");
     recoveryKey.textContent = result.recoveryKey;
     confirmation.hidden = false;
     accountLink.href = "/account/";

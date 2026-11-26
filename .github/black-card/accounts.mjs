@@ -98,7 +98,7 @@ async function register(db, data, email, request) {
   const recoveryKey = newRecoveryKey();
   const [created] = await db.batch([
     db.prepare(`INSERT INTO loyalty_accounts (id,email,name,phone,password_digest,recovery_digest,points)
-      VALUES (?,?,?,?,?,?,50) ON CONFLICT(email) DO NOTHING RETURNING points`).bind(id, email, name, phone, passwordDigest(data.password), digest(recoveryKey)),
+      VALUES (?,?,?,?,?,?,1) ON CONFLICT(email) DO NOTHING RETURNING points`).bind(id, email, name, phone, passwordDigest(data.password), digest(recoveryKey)),
     sessionInsert(db, token, id, 1, request)
   ]);
   if (!created.meta.changes) return reply(409, { error: "An account already uses this email. Sign in or reset your password." });
