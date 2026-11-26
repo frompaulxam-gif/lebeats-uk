@@ -6,7 +6,6 @@ leb-trail{display:block;min-width:0}
 .card-lettering{fill:#fff0c9;font-size:91px;letter-spacing:-.02em}
 .route-leg,.route-ink{fill:none;stroke-linecap:round;pointer-events:none}
 .route-leg{stroke:#ce8d88;stroke-width:4;stroke-dasharray:1 11}
-.route-arrows{fill:none;stroke:#efc69a;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 .route-leg.filled{stroke:#f8e8b4;stroke-width:5}
 .route-ink{stroke:#e6ef92;stroke-width:5;stroke-dasharray:1}
 .trail-stop{cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
@@ -29,7 +28,9 @@ leb-trail{display:block;min-width:0}
 .burst{fill:none;stroke:#f8eba0;stroke-width:3;opacity:0;pointer-events:none}
 .current .coin{stroke:#f9f3a3;stroke-width:4}
 .current .burst{opacity:.65;stroke-width:2}
-.current:not(.landing) .burst{animation:cedar-glow 2.7s ease-in-out infinite}
+@media(prefers-reduced-motion:no-preference){
+  .cedar-card:not(.collecting) .current > .stamp-float{animation:cedar-float 2.3s ease-in-out infinite}
+}
 .landing .impression{animation:cedar-impress .55s cubic-bezier(.2,.78,.22,1) both}
 .landing .tick{animation:cedar-check .57s .06s cubic-bezier(.22,.76,.2,1) both}
 .landing .tick-ink{stroke-dasharray:1;animation:cedar-draw .27s .23s ease-out both}
@@ -40,12 +41,12 @@ leb-trail{display:block;min-width:0}
 .card-message.emphasis{fill:#e1ed9b;text-transform:uppercase;font-size:28px;letter-spacing:.025em}
 .trail-play{font-size:.88rem;min-height:38px;padding:.48rem .8rem;margin-top:.35rem}
 .trail-announcement{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
-@keyframes cedar-glow{0%,100%{opacity:.32;transform:scale(1.025)}50%{opacity:.75;transform:scale(1.075)}}
+@keyframes cedar-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
 @keyframes cedar-impress{0%{transform:scale(.74) rotate(-7deg)}55%{transform:scale(1.14) rotate(2deg)}100%{transform:scale(1) rotate(0)}}
 @keyframes cedar-check{0%{opacity:0;transform:scale(.3)}58%{opacity:1;transform:scale(1.22)}100%{opacity:1;transform:scale(1)}}
 @keyframes cedar-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
 @keyframes cedar-ripple{0%{opacity:1;transform:scale(.76)}85%,100%{opacity:0;transform:scale(1.5)}}
-@media(prefers-reduced-motion:reduce){.current:not(.landing) .burst,.landing .impression,.landing .tick,.landing .tick-ink,.landing .burst{animation:none}}
+@media(prefers-reduced-motion:reduce){.landing .impression,.landing .tick,.landing .tick-ink,.landing .burst{animation:none}}
 main.preview-wrap{display:block;max-width:43rem;padding-block:clamp(1.5rem,5vw,3.5rem)}
 .preview-wrap h1{margin-bottom:1rem;font-size:clamp(2.35rem,6vw,3.3rem)}
 .trail-caption,.counter-heading{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}

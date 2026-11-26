@@ -24,17 +24,20 @@ function stampMarkup([x,y],index) {
   const face = prize ? '<path class="coin" d="'+seal+'"/>' : '<circle class="coin" r="41"/>';
   return `<g class="trail-stop stop-${n} ${prize?'prize':''} ${n>4?'red':'green'}" transform="translate(${x} ${y})" role="button" tabindex="0" aria-label="Stamp ${n}">
     <title>Stamp ${n}</title>
-    <circle class="burst" r="${prize?61:44}"/>
-    <g class="impression">${face}
-      <g transform="translate(0 ${prize?-13:0})">
-        <text class="stamp-number" x="-15" y="14">${n}</text>
-        <g transform="translate(15 0) scale(.72)"><path class="cedar" d="${cedarShape}"/></g>
+    <circle r="${prize?61:44}" fill="transparent"/>
+    <g class="stamp-float">
+      <circle class="burst" r="${prize?61:44}"/>
+      <g class="impression">${face}
+        <g transform="translate(0 ${prize?-13:0})">
+          <text class="stamp-number" x="-15" y="14">${n}</text>
+          <g transform="translate(15 0) scale(.72)"><path class="cedar" d="${cedarShape}"/></g>
+        </g>
+        ${prize?'<text class="prize-label" y="24">'+(n===4?'£5 OFF':'FREE MEAL')+'</text>':''}
       </g>
-      ${prize?'<text class="prize-label" y="24">'+(n===4?'£5 OFF':'FREE MEAL')+'</text>':''}
+      <g transform="translate(${prize?43:33} ${prize?35:29})"><g class="tick">
+        <circle r="24"/><path class="tick-ink" pathLength="1" d="M-13 0 L-4 9 L14 -11"/>
+      </g></g>
     </g>
-    <g transform="translate(${prize?43:33} ${prize?35:29})"><g class="tick">
-      <circle r="24"/><path class="tick-ink" pathLength="1" d="M-13 0 L-4 9 L14 -11"/>
-    </g></g>
   </g>`;
 }
 
@@ -55,9 +58,6 @@ class LoyaltyTrail extends HTMLElement {
           <svg x="31" y="24" width="114" height="98" viewBox="103 115 199 172" aria-hidden="true"><image href="https://lebeats.uk/assets/logo.png" width="400" height="400"/></svg>
           <text class="card-lettering" x="171" y="107" textLength="588" lengthAdjust="spacingAndGlyphs">LOYALTY CARD</text>
           <g aria-hidden="true" class="route-lines">${trailRoute.slice(1).map(d=>'<path class="route-leg" d="'+d+'"/>').join('')}</g>
-          <g aria-hidden="true" class="route-arrows">
-            <path d="M171 190l8 6-8 6 M346 190l8 6-8 6 M526 190l8 6-8 6 M735 260l6 8 6-8 M539 325l-8 6 8 6 M359 325l-8 6 8 6 M184 325l-8 6 8 6"/>
-          </g>
           <path class="route-ink" aria-hidden="true" pathLength="1"/>
           <g class="stops">${trailStops.map(stampMarkup).join('')}</g>
           <g class="traveller" aria-hidden="true" visibility="hidden"><g><circle r="25"/><text y="9">+1</text></g></g>
@@ -66,7 +66,7 @@ class LoyaltyTrail extends HTMLElement {
       </div>
       <div class="trail-caption"><h2 class="trail-count">Opening card…</h2><span class="trail-cycle"></span></div>
       <p class="trail-next"></p>
-      <button type="button" class="trail-play secondary" hidden>${demo?'Preview +1 stamp':'Replay last stamp'}</button>
+      <button type="button" class="trail-play secondary" hidden>${demo?'Preview +1 stamp':'Replay'}</button>
       <p class="trail-selection" role="status" hidden></p>
       <span class="trail-announcement" role="status"></span>
       <div class="trail-rewards"></div>`;
@@ -100,6 +100,7 @@ class LoyaltyTrail extends HTMLElement {
     cancelAnimationFrame(this.frame);
     this.frame=0;
     if (!this.svg) return;
+    this.svg.classList.remove("collecting");
     this.token.setAttribute("visibility","hidden");
     this.ink.removeAttribute("d");
     this.stops.forEach(stop=>stop.classList.remove("landing"));
@@ -166,6 +167,7 @@ class LoyaltyTrail extends HTMLElement {
       this.querySelector(".trail-announcement").textContent=result+". "+level+" of 8 stamps.";
     };
     if(this.motion.matches){arrive();return;}
+    this.svg.classList.add("collecting");
     this.paint(level===1 ? 0 : previous);
     this.querySelector(".trail-cycle").textContent="Card "+this.state.cycle;
     this.setMessage(total===1 && this.state.welcome ? "Your first stamp" : "Collecting your stamp…");
