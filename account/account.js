@@ -48,7 +48,19 @@ async function refreshTrail() {
     const response = await api("loyalty");
     if (revision !== trailRevision) return;
     if (response.id !== member.id) { clearKey(); await load(); return; }
-    byId("customer-trail").update(response.card);
+    const trail = byId("customer-trail");
+    const total = response.card.total;
+    const seenKey = "leb.trail.seen." + member.id;
+    let seen = Math.max(0,total-1);
+    if (!trail.state) {
+      try {
+        const saved = localStorage.getItem(seenKey);
+        if (saved !== null && Number.isSafeInteger(Number(saved))) seen = Number(saved);
+      } catch { /* The card also works without browser storage. */ }
+    }
+    const changed = trail.state?.total !== total;
+    trail.update(response.card, seen);
+    if (changed) { try { localStorage.setItem(seenKey,String(total)); } catch {} }
     byId("trail-status").textContent = "";
   } catch (error) {
     if (revision !== trailRevision) return;
@@ -56,7 +68,7 @@ async function refreshTrail() {
     else byId("trail-status").textContent = "Couldn’t update your card. We’ll try again shortly.";
   } finally { if (revision === trailRevision) pendingTrail = false; }
 }
-setInterval(refreshTrail,15000);
+setInterval(refreshTrail,6000);
 window.addEventListener("focus",refreshTrail);
 document.addEventListener("visibilitychange",refreshTrail);
 
@@ -79,7 +91,7 @@ function show(focus = false) {
   byId("member-phone-row").hidden = !member?.phone;
   byId("member-intro").textContent = member ? "Welcome, " + member.name + "." : "";
   byId("notice").textContent = "";
-  if (focus) byId(view).querySelector("h1,h2").focus();
+  if (focus) (member ? byId("member-trail") : byId(view)).querySelector("h1,h2").focus();
 }
 
 const clickSettings = byId("click-settings");

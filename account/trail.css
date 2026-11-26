@@ -1,19 +1,53 @@
 leb-trail{display:block;min-width:0}
-.trail-art{position:relative;isolation:isolate;border-radius:clamp(.7rem,2vw,1.4rem);overflow:hidden;background:#780316;box-shadow:0 .5rem 1.5rem #31130d16}
-.trail-art img{display:block;width:100%;height:auto}
-.trail-stop{position:absolute;top:44%;left:var(--x);width:11%;aspect-ratio:1;min-height:0;padding:0;transform:translate(-50%,-50%);border:0;border-radius:50%;background:transparent;color:#123d22;line-height:1}
-.trail-stop:nth-child(n+5){top:72.7%}
-.stop-1{--x:11.7%}.stop-2{--x:32.45%}.stop-3{--x:53.1%}.stop-4{--x:77.7%}
-.stop-5{--x:77.6%}.stop-6{--x:54.6%}.stop-7{--x:34.6%}.stop-8{--x:12%}
-.trail-stop:focus-visible{outline:3px solid white;outline-offset:3px}
-.trail-stop.earned:after{content:"✓";display:grid;place-items:center;position:absolute;right:0;bottom:-2%;border-radius:50%;width:33%;aspect-ratio:1;background:#104327;color:#fff6d9;box-shadow:0 0 0 2px #fff0c3;font:900 clamp(.6rem,1vw,1rem)/1 system-ui}
-.trail-stop:nth-child(n+5).earned:after{background:#8f162d}
-.trail-stop.current:before{content:"HERE";position:absolute;top:100%;left:50%;padding:.16rem .35rem;border-radius:.25rem;background:#fff0c3;color:#153b23;font:800 clamp(.55rem,1vw,.75rem)/1 system-ui;letter-spacing:.05em;box-shadow:0 2px 4px #39080b;animation:stamp-float 1.85s ease-in-out infinite;transform:translateX(-50%)}
-.trail-stop.current{outline:2px solid #fff7cf;outline-offset:2px;box-shadow:0 0 0 5px #4d001545}
-.stop-4.current,.stop-8.current{outline:0;box-shadow:none}
-.stop-4.current:before,.stop-8.current:before{top:122%}
-@keyframes stamp-float{0%,100%{transform:translate(-50%,-1px)}50%{transform:translate(-50%,-6px)}}
-@media(prefers-reduced-motion:reduce){.trail-stop.current:before{animation:none}}
+.trail-art{isolation:isolate;overflow:hidden;border-radius:clamp(.7rem,2vw,1.4rem);background:#78091c;box-shadow:0 .5rem 1.5rem #31130d16}
+.cedar-card{display:block;width:100%;height:auto;user-select:none}
+.cedar-card text{pointer-events:none}
+.card-lettering,.stamp-number,.prize-label,.traveller text,.card-message.emphasis{font-family:LebDisplay,Impact,sans-serif;font-weight:900}
+.card-lettering{fill:#fff0c9;font-size:91px;letter-spacing:-.02em}
+.route-leg,.route-ink{fill:none;stroke-linecap:round;pointer-events:none}
+.route-leg{stroke:#ce8d88;stroke-width:4;stroke-dasharray:1 11}
+.route-arrows{fill:none;stroke:#efc69a;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.route-leg.filled{stroke:#f8e8b4;stroke-width:5}
+.route-ink{stroke:#e6ef92;stroke-width:5;stroke-dasharray:1}
+.trail-stop{cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
+.coin{fill:#eddbb5;stroke:#ebc7a1;stroke-width:2.2}
+.trail-stop .impression{transform-box:fill-box;transform-origin:center}
+.stamp-number,.prize-label{fill:#243821;text-anchor:middle}
+.stamp-number{font-size:42px}.prize-label{font-size:21px;letter-spacing:.012em}
+.cedar{fill:#336541}.red .cedar{fill:#a52635}
+.prize .coin{fill:#d3ce94;stroke:#d6c58e}
+.earned .coin{fill:#fff0cc;stroke:#fff5d9}
+.prize.earned .coin{fill:#d4e786;stroke:#eff6b0}
+.earned.green .cedar{fill:#124b2b}.earned.red .cedar{fill:#a00022}
+.trail-stop:focus-visible .coin{stroke:#fff;stroke-width:6;paint-order:stroke fill}
+.trail-stop:not(.earned) .impression{opacity:.79}
+.tick{opacity:0;pointer-events:none}
+.earned .tick{opacity:1}
+.tick circle{fill:#103d27;stroke:#fff1ca;stroke-width:3.5}
+.red .tick circle{fill:#870726}
+.tick-ink{stroke:#fff9df;stroke-width:7.1;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.burst{fill:none;stroke:#f8eba0;stroke-width:3;opacity:0;pointer-events:none}
+.current .coin{stroke:#f9f3a3;stroke-width:4}
+.current .burst{opacity:.65;stroke-width:2}
+.current:not(.landing) .burst{animation:cedar-glow 2.7s ease-in-out infinite}
+.landing .impression{animation:cedar-impress .55s cubic-bezier(.2,.78,.22,1) both}
+.landing .tick{animation:cedar-check .57s .06s cubic-bezier(.22,.76,.2,1) both}
+.landing .tick-ink{stroke-dasharray:1;animation:cedar-draw .27s .23s ease-out both}
+.landing .burst{animation:cedar-ripple .82s ease-out both}
+.traveller{pointer-events:none}.traveller circle{fill:#d9eb86;stroke:#233921;stroke-width:3}
+.traveller text{fill:#183a23;text-anchor:middle;font-size:30px}
+.card-message{fill:#ffedc8;text-anchor:middle;font:700 21px Manrope,Arial,sans-serif}
+.card-message.emphasis{fill:#e1ed9b;text-transform:uppercase;font-size:28px;letter-spacing:.025em}
+.trail-play{font-size:.88rem;min-height:38px;padding:.48rem .8rem;margin-top:.35rem}
+.trail-announcement{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+@keyframes cedar-glow{0%,100%{opacity:.32;transform:scale(1.025)}50%{opacity:.75;transform:scale(1.075)}}
+@keyframes cedar-impress{0%{transform:scale(.74) rotate(-7deg)}55%{transform:scale(1.14) rotate(2deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes cedar-check{0%{opacity:0;transform:scale(.3)}58%{opacity:1;transform:scale(1.22)}100%{opacity:1;transform:scale(1)}}
+@keyframes cedar-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes cedar-ripple{0%{opacity:1;transform:scale(.76)}85%,100%{opacity:0;transform:scale(1.5)}}
+@media(prefers-reduced-motion:reduce){.current:not(.landing) .burst,.landing .impression,.landing .tick,.landing .tick-ink,.landing .burst{animation:none}}
+main.preview-wrap{display:block;max-width:43rem;padding-block:clamp(1.5rem,5vw,3.5rem)}
+.preview-wrap h1{margin-bottom:1rem;font-size:clamp(2.35rem,6vw,3.3rem)}
 .trail-caption,.counter-heading{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
 .trail-caption{margin-top:1.15rem}
 .trail-count{margin:0;font:900 clamp(1.8rem,3vw,2.55rem)/1 LebDisplay,Impact,sans-serif;text-transform:uppercase}
@@ -35,6 +69,6 @@ leb-trail{display:block;min-width:0}
 #member>h2{font:900 2.15rem/1 LebDisplay,Impact,sans-serif;text-transform:uppercase}
 #trail-status:empty{display:none}
 @media(max-width:700px){.trail-panel{margin-bottom:2.5rem}.signed-in main.wrap{display:block}}
-.trail-preview img{display:block;width:100%;height:auto;border-radius:1.2rem}
+.trail-preview{min-width:0}
 .signed-in .trail-preview{display:none}
 @media(max-width:700px){body:not(.signed-in) main.wrap{display:flex;flex-direction:column;align-items:stretch}.trail-preview{order:1}}

@@ -8,18 +8,18 @@
   <title>Your account · LEB EATS</title>
   <link rel="icon" href="https://lebeats.uk/assets/logo.png">
   <link rel="stylesheet" href="/account/account.css?v=phone-1">
-  <link rel="stylesheet" href="/account/trail.css?v=1">
-  <script defer src="/account/trail.js?v=1"></script>
+  <link rel="stylesheet" href="/account/trail.css?v=motion-1">
+  <script defer src="/account/trail.js?v=motion-1"></script>
   <script defer src="https://lebeats.uk/assets/libphonenumber/phone.js"></script>
   <script src="/account/client.js?v=welcome-1" defer></script>
-  <script src="/account/account.js?v=trail-1" defer></script>
+  <script src="/account/account.js?v=motion-1" defer></script>
 </head>
 <body>
   <header><div class="wrap"><a class="brand" href="https://lebeats.uk/" aria-label="LEB EATS home">LEB EATS</a><a class="back" href="https://lebeats.uk/">Back to the restaurant <span aria-hidden="true">↗</span></a></div></header>
   <main class="wrap">
-    <aside class="trail-preview"><img src="/account/burgundy-trail.webp" width="1586" height="992" alt="LEB EATS loyalty card. Four stamps earn £5 off and eight earn a free meal."></aside>
+    <aside class="trail-preview" aria-label="Sample loyalty card"><leb-trail demo></leb-trail></aside>
     <section class="trail-panel" id="member-trail" hidden>
-      <h1>Your loyalty card.</h1>
+      <h1 tabindex="-1">Your loyalty card.</h1>
       <leb-trail id="customer-trail" customer></leb-trail>
       <p id="trail-status" role="status"></p>
     </section>
@@ -47,6 +47,7 @@
           <button>Create account</button>
         </form>
         <p class="switch">Already have an account? <a href="#login">Sign in</a></p>
+        <p class="switch"><a href="/account/preview/">Preview the stamp trail</a></p>
       </div>
       <div id="login" hidden>
         <h1 tabindex="-1">Welcome back.</h1>
